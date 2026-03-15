@@ -1,0 +1,25 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Ll]og/
+[Ll]ogs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.user
+*.userosscache
+*.suo
+.vs/
+*.dll
+*.pdb
+*.cache
+project.assets.json
+*.nuget.g.props
+*.nuget.g.targets
+*.csproj.nuget.dgspec.json
+*.AssemblyInfo.cs
+*.GeneratedMSBuildEditorConfig.editorconfig
+PublicizedAssemblies/
+project.nuget.cache

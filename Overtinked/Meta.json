@@ -1,0 +1,10 @@
+{
+  "Name": "Overtinked",
+  "Author": "",
+  "Description": "Extends tinkering limits: configurable max tinker attempts and imbue effects. Based on the Tinkering sample by aquafir (ACE.BaseMod).",
+  "Version": "1.0",
+  "Enabled": true,
+  "HotReload": true,
+  "RegisterCommands": true,
+  "ACEVersion": "0.0"
+}
