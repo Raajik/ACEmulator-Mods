@@ -1,0 +1,10 @@
+{
+  "Name": "LeyLineLedger",
+  "Author": "",
+  "Description": "Banking and ledger mod for items, currency, and luminance.",
+  "Version": "1.0",
+  "Enabled": true,
+  "HotReload": true,
+  "RegisterCommands": true,
+  "ACEVersion": "0.0"
+}
