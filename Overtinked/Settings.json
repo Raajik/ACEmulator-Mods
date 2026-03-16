@@ -1,0 +1,105 @@
+{
+  "MaxTries": 3,
+  "Scale": 0.5,
+  "MaxImbueEffects": 2,
+  "EnableRecipeManagerPatch": true,
+  "EnableFailureRedesign": false,
+  "EnableDefaultImbueFailureWorkmanship": false,
+  "ShowPlayerSalvageMessage": false,
+  "// SalvageRules": "Per-salvage numeric effects. Use both WCIDs for quest-reward pairs (e.g. Iron 20986; Steel 20993 and 29581).",
+  "SalvageRules": [
+    {
+      "Wcids": [ 20986 ],
+      "Name": "Iron",
+      "EffectKind": "Damage",
+      "MinValue": 1,
+      "MaxValue": 5,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 20993, 29581 ],
+      "Name": "Steel",
+      "EffectKind": "ArmorLevel",
+      "MinValue": 20,
+      "MaxValue": 20,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 20985, 29576 ],
+      "Name": "Granite",
+      "EffectKind": "DamageVariance",
+      "MinValue": 20,
+      "MaxValue": 20,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 20989 ],
+      "Name": "Oak",
+      "EffectKind": "WeaponSpeed",
+      "MinValue": 50,
+      "MaxValue": 50,
+      "FixedValue": null,
+      "Enabled": true
+    }
+  ],
+  "// BleedImbue": "Serpentine (21075). Stacking DoT; combat tick logic can read BleedImbue config.",
+  "BleedImbue": {
+    "SalvageWcids": [ 21075 ],
+    "Name": "Bleed",
+    "Enabled": true,
+    "DamagePerTick": 1,
+    "MaxStacks": 10,
+    "TickIntervalSeconds": 1.0
+  },
+  "// CleavingImbue": "Tiger Eye (21081).",
+  "CleavingImbue": {
+    "SalvageWcids": [ 21081 ],
+    "Name": "Cleaving",
+    "Enabled": true
+  },
+  "// NetherRendingImbue": "Onyx (21064).",
+  "NetherRendingImbue": {
+    "SalvageWcids": [ 21064 ],
+    "Name": "Nether Rending",
+    "Enabled": true
+  },
+  "// BuffedImbueRules": "Replace default jewelry imbues with stronger ranges (e.g. Hematite +25-50 HP).",
+  "BuffedImbueRules": [
+    {
+      "Wcids": [ 21053 ],
+      "Name": "Hematite",
+      "PrimaryStat": "MaxHealth",
+      "PrimaryMin": 25,
+      "PrimaryMax": 50,
+      "SecondaryStat": null,
+      "SecondaryValue": 0,
+      "ImbuedEffectTypeName": "WarriorVitality",
+      "Enabled": false
+    },
+    {
+      "Wcids": [ 21060 ],
+      "Name": "Malachite",
+      "PrimaryStat": "MaxStamina",
+      "PrimaryMin": 25,
+      "PrimaryMax": 50,
+      "SecondaryStat": "DamageRatingFromStamina",
+      "SecondaryValue": 5,
+      "ImbuedEffectTypeName": "WarriorVigor",
+      "Enabled": false
+    },
+    {
+      "Wcids": [ 21058 ],
+      "Name": "Lavender Jade",
+      "PrimaryStat": "MaxMana",
+      "PrimaryMin": 25,
+      "PrimaryMax": 50,
+      "SecondaryStat": "DamageRatingFromMana",
+      "SecondaryValue": 5,
+      "ImbuedEffectTypeName": "MinorManaGain",
+      "Enabled": false
+    }
+  ]
+}

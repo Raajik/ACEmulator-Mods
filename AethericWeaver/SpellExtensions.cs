@@ -5,7 +5,7 @@ namespace AethericWeaver;
 // Extensions for working with SpellBase data
 public static class SpellExtensions
 {
-    public static SpellBase Clone(this SpellBase spellBase)
+    public static SpellBase? Clone(this SpellBase spellBase)
     {
         if (spellBase is null)
             return null;

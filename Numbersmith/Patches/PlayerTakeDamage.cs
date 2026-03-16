@@ -1,5 +1,4 @@
 namespace Balance.Patches;
-{
     [HarmonyPatch]
     [HarmonyPatchCategory(nameof(PlayerTakeDamage))]
     public class PlayerTakeDamage : AngouriMathPatch
@@ -36,4 +35,3 @@ namespace Balance.Patches;
         }
         #endregion
     }
-}

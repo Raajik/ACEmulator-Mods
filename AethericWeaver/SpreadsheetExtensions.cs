@@ -205,7 +205,7 @@ public static class SpreadsheetExtensions
                 T converted = (T)Convert.ChangeType(item.Trim(), typeof(T), CultureInfo.InvariantCulture);
                 result.Add(converted);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
                 //throw new FormatException($"Could not convert '{item}' to {typeof(T)}", ex);
@@ -218,7 +218,7 @@ public static class SpreadsheetExtensions
     // Parses a LOC-style position string into a Position
     public static bool TryParsePosition(object value, out Position result)
     {
-        result = null;
+        result = default!;
 
         if (value is not string input || string.IsNullOrEmpty(input))
             return false;

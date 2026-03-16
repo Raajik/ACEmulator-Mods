@@ -1,7 +1,6 @@
 using static ACE.Server.WorldObjects.WorldObject;
 
 namespace Balance.Patches;
-{
     [HarmonyPatch]
     [HarmonyPatchCategory(nameof(MeleeArmorRending))]
     public class MeleeArmorRending : AngouriMathPatch
@@ -43,4 +42,3 @@ namespace Balance.Patches;
         }
         #endregion
     }
-}

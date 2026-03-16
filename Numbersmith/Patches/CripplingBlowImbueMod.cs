@@ -1,7 +1,6 @@
 using static ACE.Server.WorldObjects.WorldObject;
 
 namespace Balance.Patches;
-{
     [HarmonyPatch]
     [HarmonyPatchCategory(nameof(CripplingBlowImbueMod))]
     public class CripplingBlowImbueMod : AngouriMathPatch
@@ -45,4 +44,3 @@ namespace Balance.Patches;
 
         #endregion
     }
-}

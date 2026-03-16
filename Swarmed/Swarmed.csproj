@@ -12,29 +12,21 @@
 		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
 	</PropertyGroup>
 
-	<!--Conditional check of a defined constant 'REALM' that lets you check for $(Realms)-->
 	<PropertyGroup>
-		<!--<DefineConstants>$(DefineConstants);REALM</DefineConstants>-->
 		<Realms>$(DefineConstants.Contains('REALM'))</Realms>
 	</PropertyGroup>
-	<!--ACE References-->
 	<PropertyGroup Condition="!$(Realms)">
 		<ACEPath>C:\ACE\Server</ACEPath>
 	</PropertyGroup>
 	<ItemGroup Condition="!$(Realms)">
 		<PackageReference Include="ACEmulator.ACE.Shared" Version="1.*" />
 	</ItemGroup>
-	<!--Realms References-->
 	<PropertyGroup Condition="$(Realms)">
 		<ACEPath>C:\ACE\RealmServer</ACEPath>
 	</PropertyGroup>
 	<ItemGroup Condition="$(Realms)">
 		<PackageReference Include="ACRealms.ACE.Shared" Version="1.*" />
 	</ItemGroup>
-
-	<PropertyGroup>
-		<PublicizeAll>true</PublicizeAll>
-	</PropertyGroup>
 
 	<ItemGroup>
 		<Compile Remove=".template.config\**" />
@@ -43,15 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Krafs.Publicizer" Version="2.2.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Lib.Harmony" Version="2.3.3" ExcludeAssets="runtime" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\ACE.Shared\ACE.Shared.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -108,8 +92,7 @@
 		</None>
 	</ItemGroup>
 
-	<!--More cleanup in Release mode?-->
-	<Target Name="CleanupFilesRelease" AfterTargets="PostBuildEvent" Condition="$(ConfigurationName) == Release">
+	<Target Name="CleanupFilesRelease" AfterTargets="PostBuildEvent">
 		<ItemGroup>
 			<FilesToDelete Include="$(OutDir)*.deps.json" />
 			<FilesToDelete Include="$(OutDir)*runtimeconfig.json" />
@@ -124,7 +107,6 @@
 		<Message Text="Files deleted: @(FilesDeleted)" />
 		<RemoveDir Directories="@(FoldersToDelete)" />
 	</Target>
-	<!--Zip if in Release mod-->
 	<Target Name="ZipOutputPath" AfterTargets="PostBuildEvent" Condition="$(ConfigurationName) == Release">
 		<ZipDirectory SourceDirectory="$(OutputPath)" DestinationFile="$(OutputPath)..\$(ProjectName).zip" Overwrite="true" />
 	</Target>

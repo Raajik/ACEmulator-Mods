@@ -64,7 +64,7 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
     }
 
     // Loads the configured spreadsheet and applies its customizations, optionally informing a player
-    private static void LoadSpellSpreadsheet(Player player = null)
+    private static void LoadSpellSpreadsheet(Player? player = null)
     {
         var sw = Stopwatch.StartNew();
         var spells = SpellCustomization.ParseCustomizations();
@@ -111,7 +111,7 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
                 }
 
                 //Create the no-gaps list using ACE logic.  Could be improved
-                SpellSetTiers lastSpellSetTier = null;
+                SpellSetTiers? lastSpellSetTier = null;
                 for (uint i = 0; i <= datSet.HighestTier; i++)
                 {
                     if (datSet.SpellSetTiers.TryGetValue(i, out var spellSetTiers))
@@ -168,7 +168,9 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
     [CommandHandler("listset", AccessLevel.Player, CommandHandlerFlag.None)]
     public static void HandleSS(Session session, params string[] parameters)
     {
-        var p = session.Player;
+        if (session?.Player is not Player p)
+            return;
+
         var s = GetLastAppraisedObject(session);
 
         if (s is null || s.EquipmentSetId is null)
@@ -199,7 +201,7 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
 
     //Lazy helper
     // Returns the last appraised WorldObject for the given session, if any
-    public static WorldObject GetLastAppraisedObject(Session session)
+    public static WorldObject? GetLastAppraisedObject(Session session)
     {
         var targetID = session.Player.RequestedAppraisalTarget;
         if (targetID == null)
@@ -252,7 +254,7 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
             MagicSchool.LifeMagic => __instance.GetCreatureSkill(Skill.LifeMagic),
             MagicSchool.VoidMagic => __instance.GetCreatureSkill(Skill.VoidMagic),
             MagicSchool x when x <= (MagicSchool)Skill.Summoning => __instance.GetCreatureSkill((Skill)x),
-            _ => null,
+            _ => __instance.GetCreatureSkill(Skill.CreatureEnchantment),
         };
 
         return false;

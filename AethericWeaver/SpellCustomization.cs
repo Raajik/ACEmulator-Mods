@@ -8,16 +8,16 @@ using Position = ACE.Entity.Position;
 namespace AethericWeaver;
 
 // SpellCustomization describes a single spell override or new spell built from a template
-public class SpellCustomization
+    public class SpellCustomization
 {
     [FormulaResult]
     public SpellId Template { get; set; }
     [FormulaResult]
     public SpellId? Id { get; set; }
     [FormulaResult]
-    public string Name { get; set; }
+    public string? Name { get; set; }
     [FormulaResult]
-    public string SpellWords { get; set; }
+    public string? SpellWords { get; set; }
     [FormulaResult]
     public MagicSchool? School { get; set; }
     [FormulaResult]
@@ -119,8 +119,8 @@ public class SpellCustomization
     public SpellCustomization(
             SpellId Template,
             SpellId? Id = default(SpellId),
-            string Name = null,
-            string SpellWords = null,
+            string? Name = null,
+            string? SpellWords = null,
             MagicSchool? School = null,
             SpellCategory? Category = null,
             SpellFlags? Bitfield = null,
@@ -395,7 +395,7 @@ public class SpellCustomization
     public static bool TryGetSpreadsheet(string path, out ExcelMapper excel, bool createMissing = true)
     {
         //Save out a default if missing?
-        excel = null;
+        excel = null!;
 
         try
         {

@@ -1,5 +1,4 @@
 namespace Balance.Patches;
-{
     [HarmonyPatch]
     [HarmonyPatchCategory(nameof(PlayerPowerMod))]
     public class PlayerPowerMod : AngouriMathPatch
@@ -41,4 +40,3 @@ namespace Balance.Patches;
         }
         #endregion
     }
-}

@@ -1,5 +1,4 @@
 namespace Balance.Patches;
-{
     [HarmonyPatch]
     [HarmonyPatchCategory(nameof(WeaponCriticalChance))]
     public class WeaponCriticalChance : AngouriMathPatch
@@ -52,4 +51,3 @@ namespace Balance.Patches;
         }
         #endregion
     }
-}

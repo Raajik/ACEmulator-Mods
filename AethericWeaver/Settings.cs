@@ -6,7 +6,7 @@ public class Settings
     // When true, the spell spreadsheet is applied automatically on world open
     public bool AutoloadSpreadsheet { get; set; } = true;
     // Path to the Excel file containing spell customizations
-    public string Spreadsheet { get; set; } = Path.Combine(Mod.Instance.ModPath, "Spells.xlsx");
+    public string Spreadsheet { get; set; } = Path.Combine(Mod.Instance?.ModPath ?? ".", "Spells.xlsx");
 
     // Custom spells use a template, apply modifications, then use Id as the final spell key
     public List<SpellCustomization> CustomSpells { get; set; } = new()

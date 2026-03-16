@@ -7,10 +7,15 @@ namespace Overtinked;
 [HarmonyPatch]
 public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : BasicPatch<Settings>(mod, settingsName)
 {
+    // Static reference for use in static patch methods (e.g. PreTryMutate).
+    internal static Settings? CurrentSettings;
+
     public override async Task OnWorldOpen()
     {
         Settings = SettingsContainer.Settings;
+        CurrentSettings = Settings;
 
+        SalvageEffectApplier.BuildLookup(Settings);
         ModifyTinkering();
 
         if (Settings.EnableRecipeManagerPatch)
@@ -147,11 +152,52 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
         return false;
     }
 
-    // Prefix: when recipe applies an imbue by dataId, sets target.ImbuedEffect and handles tinker log; otherwise runs original.
+    // Prefix: custom salvage rules, new imbues (Bleed/Cleaving/Nether), buffed jewelry, or standard imbue by dataId; otherwise run original.
     [HarmonyPrefix]
     [HarmonyPatch(typeof(RecipeManager), nameof(RecipeManager.TryMutate), new Type[] { typeof(Player), typeof(WorldObject), typeof(WorldObject), typeof(Recipe), typeof(uint), typeof(HashSet<uint>) })]
     public static bool PreTryMutate(Player player, WorldObject source, WorldObject target, Recipe recipe, uint dataId, HashSet<uint> modified, ref RecipeManager __instance, ref bool __result)
     {
+        Settings? s = CurrentSettings;
+        if (s == null)
+            return true;
+
+        uint wcid = source.WeenieClassId;
+
+        // 1) New imbues: Bleed (Serpentine), Cleaving (Tiger Eye), Nether Rending (Onyx).
+        if (TryApplyNewImbue(s, wcid, target))
+        {
+            RecipeManager.HandleTinkerLog(source, target);
+            if (s.ShowPlayerSalvageMessage)
+                player.SendMessage($"You apply the imbue to your {target.NameWithMaterial}.");
+            __result = true;
+            return false;
+        }
+
+        // 2) Custom salvage rule (random or fixed numeric effect).
+        SalvageTinkerRule? rule = SalvageEffectApplier.GetRule(s, wcid);
+        if (rule != null)
+        {
+            int value = SalvageEffectApplier.RollValue(rule);
+            if (SalvageEffectApplier.ApplyEffect(target, rule, value, isFailure: false))
+            {
+                RecipeManager.HandleTinkerLog(source, target);
+                if (s.ShowPlayerSalvageMessage)
+                    player.SendMessage($"Your {target.NameWithMaterial}: {rule.EffectKind} {(value >= 0 ? "+" : "")}{value}.");
+                ModManager.Log($"[Overtinked] {player?.Name} applied {rule.Name ?? wcid.ToString()} -> {rule.EffectKind} {value} on {target.Guid}", ModManager.LogLevel.Debug);
+                __result = true;
+                return false;
+            }
+        }
+
+        // 3) Buffed jewelry imbue (Hematite HP, Malachite Stam, etc.).
+        if (TryApplyBuffedImbue(s, wcid, target, player))
+        {
+            RecipeManager.HandleTinkerLog(source, target);
+            __result = true;
+            return false;
+        }
+
+        // 4) Standard imbue by dataId.
         if (!imbueDataIDs.TryGetValue(dataId, out var imbueEffect))
             return true;
 
@@ -162,6 +208,159 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
 
         __result = true;
         return false;
+    }
+
+    private static bool TryApplyNewImbue(Settings s, uint wcid, WorldObject target)
+    {
+        if (s.BleedImbue?.Enabled == true && s.BleedImbue.SalvageWcids != null && s.BleedImbue.SalvageWcids.Contains(wcid))
+        {
+            OvertinkedImbueStore.Add(target.Guid.Full, OvertinkedImbueFlags.Bleed);
+            return true;
+        }
+        if (s.CleavingImbue?.Enabled == true && s.CleavingImbue.SalvageWcids != null && s.CleavingImbue.SalvageWcids.Contains(wcid))
+        {
+            OvertinkedImbueStore.Add(target.Guid.Full, OvertinkedImbueFlags.Cleaving);
+            return true;
+        }
+        if (s.NetherRendingImbue?.Enabled == true && s.NetherRendingImbue.SalvageWcids != null && s.NetherRendingImbue.SalvageWcids.Contains(wcid))
+        {
+            OvertinkedImbueStore.Add(target.Guid.Full, OvertinkedImbueFlags.NetherRending);
+            return true;
+        }
+        return false;
+    }
+
+    const int ImbueFailureWorkmanshipCap = 10;
+
+    // Prefix: when EnableFailureRedesign and our roll fails, apply opposite effect (numeric) or +1 Workmanship (imbue), or let original run.
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(RecipeManager), nameof(RecipeManager.HandleRecipe), new Type[] { typeof(Player), typeof(WorldObject), typeof(WorldObject), typeof(Recipe), typeof(double) })]
+    public static bool PreHandleRecipe(Player player, WorldObject source, WorldObject target, Recipe recipe, double percentSuccess, ref RecipeManager __instance)
+    {
+        Settings? s = CurrentSettings;
+        if (s == null || (!s.EnableFailureRedesign && !s.EnableDefaultImbueFailureWorkmanship))
+            return true;
+
+        bool rolledSuccess = Random.Shared.NextDouble() * 100.0 < percentSuccess;
+        if (rolledSuccess)
+            return true;
+
+        // Ensure a failed attempt never increases tinker count; we'll restore this after applying failure effects.
+        int numTimesTinkered = target.GetProperty(PropertyInt.NumTimesTinkered) ?? 0;
+
+        uint wcid = source.WeenieClassId;
+        HashSet<uint> imbueWcids = ImbueSalvageWcids.Build(s);
+
+        if (imbueWcids.Contains(wcid) && s.EnableDefaultImbueFailureWorkmanship)
+        {
+            player.TryConsumeFromInventoryWithNetworking(wcid, 1);
+            int currentInt = GetWorkmanship(target);
+            if (currentInt < ImbueFailureWorkmanshipCap)
+            {
+                SetWorkmanship(target, currentInt + 1);
+                player.Session?.Network?.EnqueueSend(new GameMessageSystemChat($"Your imbue attempt failed, but the {target.NameWithMaterial} gains a point of workmanship.", ChatMessageType.Craft));
+                ModManager.Log($"[Overtinked] Imbue failure Workmanship: {player.Name} +1 Workmanship on {target.Guid} (now {currentInt + 1}).");
+            }
+            else
+            {
+                player.Session?.Network?.EnqueueSend(new GameMessageSystemChat($"Your imbue attempt failed. The {target.NameWithMaterial} is already at maximum workmanship.", ChatMessageType.Craft));
+            }
+            target.SetProperty(PropertyInt.NumTimesTinkered, numTimesTinkered);
+            return false;
+        }
+
+        SalvageTinkerRule? rule = SalvageEffectApplier.GetRule(s, wcid);
+        if (rule == null || !s.EnableFailureRedesign)
+            return true;
+
+        player.TryConsumeFromInventoryWithNetworking(wcid, 1);
+        int magnitude = rule.FixedValue ?? (rule.MinValue + rule.MaxValue) / 2;
+        if (SalvageEffectApplier.ApplyEffect(target, rule, magnitude, isFailure: true))
+        {
+            player.Session?.Network?.EnqueueSend(new GameMessageSystemChat($"Your tinkering failed! The {target.NameWithMaterial} is now slightly worse.", ChatMessageType.Craft));
+            ModManager.Log($"[Overtinked] Failure redesign: {player.Name} applied opposite {rule.EffectKind} -{magnitude} on {target.Guid}");
+        }
+        target.SetProperty(PropertyInt.NumTimesTinkered, numTimesTinkered);
+
+        return false;
+    }
+
+    private static bool TryApplyBuffedImbue(Settings s, uint wcid, WorldObject target, Player? player)
+    {
+        if (s.BuffedImbueRules == null)
+            return false;
+        BuffedImbueRule? buffed = s.BuffedImbueRules.FirstOrDefault(r => r.Enabled && r.Wcids != null && r.Wcids.Contains(wcid));
+        if (buffed == null)
+            return false;
+        int primaryMin = buffed.PrimaryMin;
+        int primaryMax = buffed.PrimaryMax;
+        if (primaryMin > primaryMax)
+            (primaryMin, primaryMax) = (primaryMax, primaryMin);
+        int rolled = primaryMin == primaryMax ? primaryMin : Random.Shared.Next(primaryMin, primaryMax + 1);
+        string stat = buffed.PrimaryStat ?? "";
+        if (string.IsNullOrEmpty(stat))
+            return true;
+        // Map friendly names to ACE PropertyInt (exact name depends on server; adjust if needed).
+        string propName = stat switch { "MaxHealth" => "HealthCapacity", "MaxStamina" => "StaminaCapacity", "MaxMana" => "ManaCapacity", _ => stat };
+        if (Enum.TryParse<PropertyInt>(propName, ignoreCase: true, out var prop))
+        {
+            int current = target.GetProperty(prop) ?? 0;
+            target.SetProperty(prop, current + rolled);
+        }
+        if (!string.IsNullOrEmpty(buffed.ImbuedEffectTypeName) && Enum.TryParse<ImbuedEffectType>(buffed.ImbuedEffectTypeName, ignoreCase: true, out var effectType))
+            target.ImbuedEffect |= effectType;
+        if (!string.IsNullOrEmpty(buffed.SecondaryStat) && buffed.SecondaryValue > 0)
+            BuffedJewelrySecondaryStore.Add(target.Guid.Full, buffed.SecondaryStat, buffed.SecondaryValue);
+        if (s.ShowPlayerSalvageMessage && player != null)
+            player.SendMessage($"Your {target.NameWithMaterial}: {buffed.PrimaryStat} +{rolled}.");
+        return true;
+    }
+
+    // Postfix: add Damage Rating from buffed jewelry secondary (e.g. 5% of MaxStamina or MaxMana per equipped item).
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(Player), nameof(Player.GetDamageRating), new Type[] { typeof(int) })]
+    public static void PostGetDamageRating(Player __instance, int damageRating, ref float __result)
+    {
+        if (__instance?.EquippedObjects == null)
+            return;
+        double bonusRating = 0;
+        foreach (WorldObject item in __instance.EquippedObjects.Values)
+        {
+            var entry = BuffedJewelrySecondaryStore.Get(item.Guid.Full);
+            if (entry == null)
+                continue;
+            string stat = entry.Value.Stat;
+            double pct = entry.Value.Percent / 100.0;
+            if (string.Equals(stat, "DamageRatingFromStamina", StringComparison.OrdinalIgnoreCase))
+                bonusRating += pct * __instance.Stamina.MaxValue;
+            else if (string.Equals(stat, "DamageRatingFromMana", StringComparison.OrdinalIgnoreCase))
+                bonusRating += pct * __instance.Mana.MaxValue;
+        }
+        if (bonusRating <= 0)
+            return;
+        __result *= (float)(1.0 + bonusRating / 100.0);
+    }
+
+    private static int GetWorkmanship(WorldObject wo)
+    {
+        var t = Traverse.Create(wo).Property("Workmanship");
+        if (!t.PropertyExists())
+            return 0;
+        object? v = t.GetValue();
+        if (v is int i)
+            return i;
+        if (v is double d)
+            return (int)d;
+        if (v is float f)
+            return (int)f;
+        return 0;
+    }
+
+    private static void SetWorkmanship(WorldObject wo, int value)
+    {
+        var t = Traverse.Create(wo).Property("Workmanship");
+        if (t.PropertyExists())
+            t.SetValue(value);
     }
 
     // Maps recipe mutation dataIds to ImbuedEffectType flags so we can set target.ImbuedEffect when the recipe applies an imbue.

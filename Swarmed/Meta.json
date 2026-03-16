@@ -1,0 +1,10 @@
+{
+  "Name": "Swarmed",
+  "Author": "",
+  "Description": "Controls NPC spawn rates: when a mob is killed it may emote a call for help and spawn 1-5 similar reinforcements (50% health, same XP/loot). Separate settings for landscape (default on) vs dungeon (default off).",
+  "Version": "1.0",
+  "Enabled": true,
+  "HotReload": true,
+  "RegisterCommands": true,
+  "ACEVersion": "0.0"
+}
