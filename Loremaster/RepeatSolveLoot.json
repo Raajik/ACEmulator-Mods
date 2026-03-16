@@ -1,0 +1,109 @@
+{
+  "_comment": [
+    "RepeatSolveLoot.json — weighted loot table for repeat quest solves (2nd, 3rd, etc.)",
+    "",
+    "HOW IT WORKS:",
+    "  All enabled groups are flattened into a single pool. Each group has a Weight.",
+    "  All items within a group are equally likely — the group Weight determines how",
+    "  often ANY item from that group is picked relative to other groups.",
+    "",
+    "  Effective drop chance for one item =",
+    "    GroupWeight / TotalPoolWeight / ItemsInGroup",
+    "",
+    "  Example with two groups:",
+    "    Common (Weight: 1000, 10 items)  → each item: 1000/11000/10 = ~0.9% chance",
+    "    Rare   (Weight: 100,   2 items)  → each item:  100/11000/2  = ~0.45% chance",
+    "",
+    "WEIGHT TIERS (suggested):",
+    "  Common:      1000",
+    "  Uncommon:     100",
+    "  Rare:          10",
+    "  Ultra-Rare:     1",
+    "",
+    "DISABLING A GROUP:",
+    "  Set its Weight to 0. Items are still listed for reference.",
+    "",
+    "DISABLING A SINGLE ITEM:",
+    "  Remove it from the Wcids list, or move it to a group with Weight 0.",
+    "",
+    "PER-QUEST OVERRIDES:",
+    "  Add an entry to QuestOverrides keyed by the quest's internal name.",
+    "  When that quest triggers a repeat-solve drop, its groups are used",
+    "  INSTEAD OF the global groups above. Same Weight/Wcids structure.",
+    "  Set QuestOverrides to {} to use only the global table for all quests."
+  ],
+
+  "Groups": [
+    {
+      "_comment": "MMD — always on, very common",
+      "Name": "MMD",
+      "Weight": 1000,
+      "Wcids": [
+        20630
+      ],
+      "_wcid_names": {
+        "20630": "Trade Note (250,000)"
+      }
+    },
+    {
+      "_comment": "Useful Salvage — common reward. Set Weight to 0 to disable.",
+      "Name": "Salvage - Common",
+      "Weight": 800,
+      "Wcids": [
+        20985, 20986, 20988, 20993,
+        21055, 21059, 21073
+      ],
+      "_wcid_names": {
+        "20985": "Salvaged Granite",
+        "20986": "Salvaged Iron",
+        "20988": "Salvaged Mahogany",
+        "20993": "Salvaged Steel",
+        "21055": "Salvaged Ivory",
+        "21059": "Salvaged Leather",
+        "21073": "Salvaged Sandstone"
+      }
+    },
+    {
+      "_comment": "Foolproof Salvage — uncommon reward for repeat solves. Set Weight to 0 to disable.",
+      "Name": "Foolproof Salvage",
+      "Weight": 100,
+      "Wcids": [
+        30094, 30095, 30096, 30097, 30098, 30099, 30100,
+        30101, 30102, 30103, 30104, 30105, 30106
+      ],
+      "_wcid_names": {
+        "30094": "Foolproof Aquamarine",
+        "30095": "Foolproof Black Garnet",
+        "30096": "Foolproof Black Opal",
+        "30097": "Foolproof Emerald",
+        "30098": "Foolproof Fire Opal",
+        "30099": "Foolproof Imperial Topaz",
+        "30100": "Foolproof Jet",
+        "30101": "Foolproof Peridot",
+        "30102": "Foolproof Red Garnet",
+        "30103": "Foolproof Sunstone",
+        "30104": "Foolproof White Sapphire",
+        "30105": "Foolproof Yellow Topaz",
+        "30106": "Foolproof Zircon"
+      }
+    }
+  ],
+
+  "QuestOverrides": {
+    "PathwardenComplete": {
+      "_comment": "Example override — Pathwarden gives better loot on repeats",
+      "Groups": [
+        {
+          "Name": "Pathwarden Rewards",
+          "Weight": 500,
+          "Wcids": [
+            20630
+          ],
+          "_wcid_names": {
+            "20630": "Trade Note (250,000)"
+          }
+        }
+      ]
+    }
+  }
+}

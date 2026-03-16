@@ -1,0 +1,136 @@
+{
+  "// FeatureToggles": "Enable or disable each QOL feature. Set a value to true to enable that patch category, or false to disable it.",
+  "// EnableAnimations": "Speeds up or skips certain animations (recalls, /die) and lets you control /die message timing.",
+  "EnableAnimations": true,
+  "// EnableAugmentations": "Adjusts augmentation caps and optionally ignores shared attribute/resist group limits so augs stack independently.",
+  "EnableAugmentations": true,
+  "// EnableDefaults": "Applies global default property overrides on world open (for example higher MaximumLuminance).",
+  "EnableDefaults": true,
+  "// EnableFellowships": "Changes fellowship size, invite behavior (ignore busy), and XP share percentages.",
+  "EnableFellowships": true,
+  "// EnablePermanentObjects": "Prevents objects/containers marked FakeBool.Permanent from being wiped by landblock resets.",
+  "EnablePermanentObjects": true,
+  "// EnableRecklessness": "Tweaks Recklessness damage bonus scaling across power levels.",
+  "EnableRecklessness": true,
+  "// EnableTailoring": "Relaxes tailoring requirements to allow more flexible armor clothing swaps while still blocking unsafe cases.",
+  "EnableTailoring": true,
+  "// EnableVendorsBuyEverything": "Makes vendors accept all sellable item types (subject to vanilla IsSellable/Retained checks).",
+  "EnableVendorsBuyEverything": true,
+  "// EnableQuestgiverAuras": "Adds visible auras to NPCs that stamp or inquire quests using an Aegis WCID you choose.",
+  "EnableQuestgiverAuras": true,
+  "// EnableStackable": "Makes additional item categories stackable (books, keys, generics, lockpicks, scrolls) using the settings below.",
+  "EnableStackable": true,
+  "// MaxSpecCredits": "Total specialisation credits a player may spend. Vanilla cap is 70. Set to 9999 to make it effectively unlimited.",
+  "MaxSpecCredits": 9999,
+  "Animations": {
+    "DieSeconds": 0.0,
+    "AnimationSpeeds": {
+      "AllegianceHometownRecall": 0.0,
+      "HouseRecall": 0.0,
+      "LifestoneRecall": 0.0,
+      "MarketplaceRecall": 0.0,
+      "PKArenaRecall": 0.0
+    }
+  },
+  "Defaults": {
+    "Int64Defaults": {
+      "MaximumLuminance": 1000000000
+    },
+    "IntDefaults": {},
+    "FloatDefaults": {},
+    "BoolDefaults": {}
+  },
+  "Fellowship": {
+    "SendDetails": true,
+    "MaxMembers": 30,
+    "IgnoreBusy": false,
+    "OverrideSharePercent": true,
+    "// FlatSharePercent": "XP share fraction applied to all members when OverrideSharePercent is true. 1.0 = 100%, 0.5 = 50%.",
+    "FlatSharePercent": 1.0,
+    "// SharePercent": "Per-member-count XP share table used when OverrideSharePercent is false. Keys are fellowship sizes, values are fractions (0.0\u20131.0).",
+    "SharePercent": {
+      "1": 1.0,
+      "2": 0.75,
+      "3": 0.6,
+      "4": 0.55,
+      "5": 0.5,
+      "6": 0.45,
+      "7": 0.4,
+      "8": 0.35,
+      "9": 0.3
+    },
+    "// DefaultShare": "XP share fraction for fellowships larger than the highest key in SharePercent. 0.0 = no share beyond the table.",
+    "DefaultShare": 0.0
+  },
+  "Recklessness": {
+    "// PowerLow": "Attack power fraction below which Recklessness provides no bonus. Range 0.0\u20131.0.",
+    "PowerLow": 0.2,
+    "// PowerHigh": "Attack power fraction at which Recklessness reaches full effectiveness. Range 0.0\u20131.0.",
+    "PowerHigh": 0.8,
+    "// RatingTrained": "Damage rating bonus granted when Recklessness is Trained.",
+    "RatingTrained": 10,
+    "// RatingSpecialized": "Damage rating bonus granted when Recklessness is Specialized.",
+    "RatingSpecialized": 20
+  },
+  "Augmentation": {
+    "IgnoreSharedAttribute": false,
+    "IgnoreSharedResist": false,
+    "MaxAugs": {
+      "Strength": 10,
+      "Endurance": 10,
+      "Coordination": 10,
+      "Quickness": 10,
+      "Focus": 10,
+      "Self": 10,
+      "Salvage": 1,
+      "ItemTinkering": 1,
+      "ArmorTinkering": 1,
+      "MagicItemTinkering": 1,
+      "WeaponTinkering": 1,
+      "PackSlot": 1,
+      "BurdenLimit": 5,
+      "DeathItemLoss": 3,
+      "DeathSpellLoss": 1,
+      "CritProtect": 1,
+      "BonusXP": 1,
+      "BonusSalvage": 4,
+      "ImbueChance": 1,
+      "RegenBonus": 2,
+      "SpellDuration": 5,
+      "ResistSlash": 2,
+      "ResistPierce": 2,
+      "ResistBludgeon": 2,
+      "ResistAcid": 2,
+      "ResistFire": 2,
+      "ResistCold": 2,
+      "ResistElectric": 2,
+      "FociCreature": 1,
+      "FociItem": 1,
+      "FociLife": 1,
+      "FociWar": 1,
+      "FociVoid": 1
+    }
+  },
+  "QuestgiverAuras": {
+    "// AegisWcid": "WCID of the Aegis item equipped to quest-giver NPCs. Sanguinary Aegis options: 23356=Blue, 23357=Green, 23358=Pink, 23359=Red, 23360=White. Golden Flame: 35982.",
+    "AegisWcid": 23357,
+    "// DebugLogging": "When true, logs a WARN line each time an aura Aegis is created and equipped to a quest-giver NPC. Intended for debugging only.",
+    "DebugLogging": false
+  },
+  "Stackable": {
+    "MaxStackSize": 100,
+    "// StackableTypes": "Per-type toggles for extra stackable item categories. Set a value to true to make that WeenieType stackable, or false to leave it unmodified.",
+    "EnableBooks": true,
+    "EnableKeys": true,
+    "EnableGeneric": true,
+    "EnableLockpicks": true,
+    "EnableScrolls": true,
+    "StackableTypes": [
+      "Book",
+      "Key",
+      "Generic",
+      "Lockpick",
+      "Scroll"
+    ]
+  }
+}
