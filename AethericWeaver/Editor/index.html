@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AethericWeaver Editor</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div class="app-root">
+        <header class="app-header">
+            <div class="app-header-inner">
+                <div class="app-header-left">
+                    <h1 class="app-title">AethericWeaver Editor</h1>
+                    <span class="app-subtitle">Spell &amp; set customization</span>
+                </div>
+                <div class="app-header-right">
+                    <div class="theme-toggle">
+                        <label class="toggle-label" for="themeToggle">Dark mode</label>
+                        <button id="themeToggle" class="toggle-switch" aria-pressed="true">
+                            <span class="toggle-thumb"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <aside class="sidebar">
+                <section class="panel">
+                    <h2 class="panel-title">Files</h2>
+                    <div class="panel-body">
+                        <div class="field-group">
+                            <label class="field-label" for="configFileInput">Unified config (JSON)</label>
+                            <input id="configFileInput" type="file" accept=".json" />
+                        </div>
+                        <div class="button-row">
+                            <button id="downloadConfigBtn" class="btn primary" disabled>Download Config.json</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <h2 class="panel-title">Filters</h2>
+                    <div class="panel-body">
+                        <input id="searchInput" class="search-input" type="search" placeholder="Search by name, id, template..." />
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <h2 class="panel-title">Help</h2>
+                    <div class="panel-body help-text">
+                        <p>
+                            AethericWeaver applies changes from this spreadsheet and settings file when the world opens.
+                        </p>
+                        <p>
+                            Use this editor to experiment safely with new spells and equipment set tiers before deploying them to your shard.
+                        </p>
+                    </div>
+                </section>
+            </aside>
+
+            <section class="content">
+                <nav class="tabs">
+                    <button class="tab active" data-tab="spells">Spells</button>
+                    <button class="tab" data-tab="sets">Sets</button>
+                </nav>
+
+                <section id="tab-spells" class="tab-panel active">
+                    <div class="toolbar">
+                        <div class="toolbar-left">
+                            <button id="addSpellBtn" class="btn primary" disabled>Add spell</button>
+                            <button id="cloneSpellBtn" class="btn" disabled>Clone selected</button>
+                            <button id="deleteSpellBtn" class="btn danger" disabled>Delete selected</button>
+                        </div>
+                        <div class="toolbar-right" id="spellStatus"></div>
+                    </div>
+
+                    <div class="spells-layout">
+                        <div class="table-container">
+                            <table class="data-table" id="spellsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Template</th>
+                                        <th>Id</th>
+                                        <th>Name</th>
+                                        <th>School</th>
+                                        <th>Category</th>
+                                        <th>EType</th>
+                                        <th>DamageType</th>
+                                        <th>BaseIntensity</th>
+                                        <th>StatModVal</th>
+                                        <th>Duration</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="detail-panel" id="spellDetail">
+                            <h2 class="panel-title">Spell details</h2>
+                            <div class="panel-body">
+                                <p class="muted">Select a spell to edit its full properties.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="tab-sets" class="tab-panel">
+                    <div class="toolbar">
+                        <div class="toolbar-left">
+                            <button id="addSetBtn" class="btn primary" disabled>Add set</button>
+                            <button id="addTierBtn" class="btn" disabled>Add tier</button>
+                            <button id="deleteTierBtn" class="btn danger" disabled>Delete tier</button>
+                        </div>
+                        <div class="toolbar-right" id="setStatus"></div>
+                    </div>
+
+                    <div class="sets-layout">
+                        <div class="table-container">
+                            <table class="data-table" id="setsTable">
+                                <thead>
+                                    <tr>
+                                        <th>EquipmentSet</th>
+                                        <th>Tier (NumEquipped)</th>
+                                        <th>Spells</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Populated by app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="detail-panel" id="setDetail">
+                            <h2 class="panel-title">Set details</h2>
+                            <div class="panel-body">
+                                <p class="muted">Select a set/tier to edit its spells.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+

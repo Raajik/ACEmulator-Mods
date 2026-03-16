@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<NoWarn>0436;1073;8509</NoWarn>
+		<LangVersion>preview</LangVersion>
+		<EnablePreviewFeatures>true</EnablePreviewFeatures>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<OutputPath>C:\ACE\Mods\$(AssemblyName)</OutputPath>
@@ -34,32 +35,34 @@
 	</ItemGroup>
 
 	<PropertyGroup>
-		<PublicizerClearCacheOnClean>true</PublicizerClearCacheOnClean>
+		<PublicizeAll>true</PublicizeAll>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<Publicize Include="ACE.Server" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<Compile Remove=".template.config\**" />
 		<EmbeddedResource Remove=".template.config\**" />
 		<None Remove=".template.config\**" />
 	</ItemGroup>
+
 	<ItemGroup>
-		<Compile Remove="Features\FakeReducedBurden.cs" />
+		<Compile Remove="Patches\LevelingPatches.cs" />
+		<Compile Remove="Patches\MovementPatches.cs" />
+		<Compile Remove="Patches\NetherPatches.cs" />
 	</ItemGroup>
+
 	<ItemGroup>
-		<None Remove="Features\fr4c2v0j.jaf~" />
-	</ItemGroup>
-	<ItemGroup>
+		<PackageReference Include="AngouriMath" Version="1.4.0-preview.3" />
 		<PackageReference Include="Krafs.Publicizer" Version="2.2.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Lib.Harmony" Version="2.3.3" ExcludeAssets="runtime" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.11.0" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\ACE.Shared\ACE.Shared.csproj" />
+	</ItemGroup>
+
 	<ItemGroup>
 		<Reference Include="ACE.Adapter">
 			<HintPath>$(ACEPath)\ACE.Adapter.dll</HintPath>
@@ -97,27 +100,12 @@
 			<CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
 			<ExcludeAssets>all</ExcludeAssets>
 		</Reference>
-		<Reference Include="Discord">
-			<HintPath>C:\ACE\Mods\Discord\Discord.dll</HintPath>
-		</Reference>
-		<Reference Include="McMaster.NETCore.Plugins">
-			<HintPath>$(ACEPath)$(ACEPath)\McMaster.NETCore.Plugins.dll</HintPath>
-		</Reference>
-		<Reference Include="Microsoft.EntityFrameworkCore">
-			<HintPath>$(ACEPath)\Microsoft.EntityFrameworkCore.dll</HintPath>
-			<Private>False</Private>
-			<CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
-			<ExcludeAssets>all</ExcludeAssets>
-		</Reference>
 	</ItemGroup>
+
 	<ItemGroup>
 		<None Update="Meta.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\ACE.Shared\ACE.Shared.csproj" />
 	</ItemGroup>
 
 	<!--More cleanup in Release mode?-->

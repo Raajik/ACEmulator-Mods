@@ -1,9 +1,9 @@
-﻿//using ACE.Database;
+//using ACE.Database;
 //using ACE.DatLoader.FileTypes;
 //using ACE.DatLoader;
 //using static ACE.Server.Factories.PlayerFactory;
 
-//namespace Expansion.Features;
+namespace Expansion.Features;
 
 //[CommandCategory(nameof(Feature.OverrideCreatePlayer))]
 //[HarmonyPatchCategory(nameof(Feature.OverrideCreatePlayer))]

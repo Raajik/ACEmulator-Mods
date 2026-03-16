@@ -1,4 +1,4 @@
-﻿//using System;
+//using System;
 //using System.Collections.Generic;
 //using System.Linq;
 //using System.Text;
@@ -9,7 +9,7 @@
 //using ACE.Server.Network.Enum;
 //using Mono.Cecil;
 
-//namespace Expansion.Features;
+namespace Expansion.Features;
 
 //[CommandCategory(nameof(Feature.FakeDurability))]
 //[HarmonyPatchCategory(nameof(Feature.FakeDurability))]

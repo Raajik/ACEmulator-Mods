@@ -1,4 +1,4 @@
-﻿//namespace Expansion.Features;
+namespace Expansion.Features;
 
 //[CommandCategory(nameof(Feature.OverrideSpellProjectiles))]
 //[HarmonyPatchCategory(nameof(Feature.OverrideSpellProjectiles))]

@@ -1,9 +1,9 @@
-﻿//Temporarily disabled
+//Temporarily disabled
 //using ACE.Common.Extensions;
 //using ACE.DatLoader;
 //using ACE.DatLoader.Entity;
 
-//namespace Expansion.Helpers;
+namespace Expansion.Helpers;
 
 //public static class SpellHelper
 //{

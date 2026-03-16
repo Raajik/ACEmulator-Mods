@@ -1,0 +1,62 @@
+{
+  "Spells": [
+    {
+      "Template": "strengthSelf1",
+      "Id": "strengthSelf1",
+      "Name": "Lesser Strength I",
+      "School": "CreatureEnchantment",
+      "Category": "SomeBuffCategory",
+      "EType": "Slash",
+      "DamageType": "Health",
+      "BaseIntensity": 0,
+      "StatModVal": 5,
+      "Duration": 600
+    },
+    {
+      "Template": "strengthSelf1",
+      "Id": 9999,
+      "Name": "Boosted Strength I",
+      "School": "CreatureEnchantment",
+      "Category": 987,
+      "EType": "Bludgeon",
+      "DamageType": "Health",
+      "BaseIntensity": 0,
+      "StatModVal": 111,
+      "Duration": 600
+    },
+    {
+      "Template": "acidVolley1",
+      "Id": "acidVolley1",
+      "Name": "Bludgeoning Acid Volley I",
+      "School": "WarMagic",
+      "Category": "SomeProjectileCategory",
+      "EType": "Bludgeon",
+      "DamageType": "Health",
+      "BaseIntensity": 50,
+      "StatModVal": 0,
+      "Duration": 0
+    }
+  ],
+  "Sets": {
+    "adepts": [
+      {
+        "NumEquipped": 3,
+        "Spells": ["harmSelf3", "acidProtectionSelf3"]
+      },
+      {
+        "NumEquipped": 4,
+        "Spells": ["harmSelf5", "acidProtectionSelf5"]
+      }
+    ],
+    "999": [
+      {
+        "NumEquipped": 1,
+        "Spells": ["fireProtectionSelf6"]
+      },
+      {
+        "NumEquipped": 2,
+        "Spells": ["fireProtectionSelf7"]
+      }
+    ]
+  }
+}

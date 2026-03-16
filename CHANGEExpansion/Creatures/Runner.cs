@@ -1,4 +1,4 @@
-﻿//namespace Expansion.Creatures;
+namespace Expansion.Creatures;
 
 ////[HarmonyPatchCategory(nameof(CreatureExType.Runner))]
 //public class Runner : CreatureEx

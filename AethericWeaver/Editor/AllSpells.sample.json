@@ -1,0 +1,63 @@
+{
+  "spells": [
+    {
+      "id": 1,
+      "spellId": "strengthSelf1",
+      "name": "Strength Self I",
+      "school": "CreatureEnchantment",
+      "category": "Buff",
+      "type": "buff",
+      "iconData": "data:image/png;base64,"
+    },
+    {
+      "id": 2,
+      "spellId": "warriorsVitality",
+      "name": "Warrior's Vitality",
+      "school": "LifeMagic",
+      "category": "Heal",
+      "type": "vital_boost",
+      "iconData": "data:image/png;base64,"
+    },
+    {
+      "id": 3,
+      "spellId": "acidVolley1",
+      "name": "Acid Volley I",
+      "school": "WarMagic",
+      "category": "Projectile",
+      "type": "projectile",
+      "iconData": "data:image/png;base64,"
+    }
+  ],
+  "schools": {
+    "CreatureEnchantment": {
+      "iconData": "data:image/png;base64,"
+    },
+    "ItemEnchantment": {
+      "iconData": "data:image/png;base64,"
+    },
+    "LifeMagic": {
+      "iconData": "data:image/png;base64,"
+    },
+    "WarMagic": {
+      "iconData": "data:image/png;base64,"
+    },
+    "VoidMagic": {
+      "iconData": "data:image/png;base64,"
+    }
+  },
+  "elements": {
+    "Fire": {
+      "iconData": "data:image/png;base64,"
+    },
+    "Acid": {
+      "iconData": "data:image/png;base64,"
+    },
+    "Electric": {
+      "iconData": "data:image/png;base64,"
+    },
+    "Cold": {
+      "iconData": "data:image/png;base64,"
+    }
+  }
+}
+

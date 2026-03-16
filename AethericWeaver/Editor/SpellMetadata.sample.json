@@ -1,0 +1,32 @@
+{
+  "spells": [
+    {
+      "id": 1,
+      "spellId": "strengthSelf1",
+      "name": "Strength Self I",
+      "iconId": 101,
+      "school": "CreatureEnchantment",
+      "category": "Buff",
+      "type": "buff"
+    },
+    {
+      "id": 2,
+      "spellId": "warriorsVitality",
+      "name": "Warrior's Vitality",
+      "iconId": 102,
+      "school": "LifeMagic",
+      "category": "Heal",
+      "type": "vital_boost"
+    },
+    {
+      "id": 3,
+      "spellId": "acidVolley1",
+      "name": "Acid Volley I",
+      "iconId": 103,
+      "school": "WarMagic",
+      "category": "Projectile",
+      "type": "projectile"
+    }
+  ]
+}
+

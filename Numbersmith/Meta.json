@@ -1,0 +1,10 @@
+{
+  "Name": "Numbersmith",
+  "Author": "",
+  "Description": "Numbersmith lets you adjust combat and progression balance using formula-driven Harmony patches for damage, crits, healing, and experience.",
+  "Version": "1.0",
+  "Enabled": true,
+  "HotReload": true,
+  "RegisterCommands": true,
+  "ACEVersion": "0.0"
+}

@@ -1,10 +1,10 @@
-﻿//Temporarily removed
+//Temporarily removed
 
 //using ACE.DatLoader;
 //using ACE.DatLoader.Entity;
 //using static ACE.Server.WorldObjects.Player;
 
-//namespace Expansion.Features;
+namespace Expansion.Features;
 
 //[CommandCategory(nameof(Feature.FakeSpellMeta))]
 //[HarmonyPatchCategory(nameof(Feature.FakeSpellMeta))]

@@ -1,0 +1,10 @@
+{
+  "Name": "AethericWeaver",
+  "Author": "",
+  "Description": "AethericWeaver enables customization and extension of spells and equipment sets via spreadsheet-driven definitions and Harmony patches.",
+  "Version": "1.0",
+  "Enabled": true,
+  "HotReload": true,
+  "RegisterCommands": true,
+  "ACEVersion": "0.0"
+}

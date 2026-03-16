@@ -1,7 +1,7 @@
 {
   "Name": "Raise",
   "Author": "",
-  "Description": "This is an example metadata file for a non-existent mod.",
+  "Description": "Provides alternate raising and leveling options, including custom level cost and progression settings.",
   "Version": "1.0",
   "Enabled": true,
   "HotReload": true,

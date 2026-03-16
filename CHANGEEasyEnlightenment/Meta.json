@@ -1,7 +1,7 @@
 {
   "Name": "EasyEnlightenment",
   "Author": "",
-  "Description": "This is an example metadata file for a non-existent mod.",
+  "Description": "Simplifies or accelerates enlightenment requirements and wield checks for an easier endgame path.",
   "Version": "1.0",
   "Enabled": true,
   "HotReload": true,
