@@ -1,0 +1,11 @@
+{
+  "Name": "Swiftmend",
+  "Author": "",
+  "Description": "Alters healing kits so they always target self and apply a 30-second heal-over-time buff that scales with Healing skill. Specialized Healing doubles the HoT bonus.",
+  "Version": "1.0",
+  "Enabled": true,
+  "HotReload": true,
+  "RegisterCommands": true,
+  "ACEVersion": "0.0"
+}
+

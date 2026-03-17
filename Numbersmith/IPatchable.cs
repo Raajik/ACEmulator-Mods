@@ -1,4 +1,4 @@
-﻿namespace Balance;
+namespace Numbersmith;
 
 public interface IPatchable
 {

@@ -146,11 +146,33 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
             return;
         }
 
-        //Transfer stub: reserved for future implementation
+        //Transfer: /bank transfer pyreals <amount> <targetName> or /b t p <amount> <targetName>
         if (verbToken.Equals("transfer", StringComparison.OrdinalIgnoreCase) ||
             verbToken.Equals("t", StringComparison.OrdinalIgnoreCase))
         {
-            player.SendMessage("Bank transfers are not implemented yet in this build.");
+            if (parameters.Length < 4)
+            {
+                player.SendMessage("Usage: /bank transfer pyreals <amount> <character name>");
+                return;
+            }
+
+            var currencyToken = parameters[1];
+            if (!currencyToken.Equals("pyreals", StringComparison.OrdinalIgnoreCase) &&
+                !currencyToken.Equals("p", StringComparison.OrdinalIgnoreCase))
+            {
+                player.SendMessage("Usage: /bank transfer pyreals <amount> <character name>");
+                return;
+            }
+
+            var amountToken = parameters[2];
+            var targetName = string.Join(" ", parameters.Skip(3)).Trim();
+            if (string.IsNullOrWhiteSpace(targetName))
+            {
+                player.SendMessage("Specify the target character name.");
+                return;
+            }
+
+            BankExtensions.TransferPyreals(session, amountToken, targetName);
             return;
         }
 
@@ -320,6 +342,57 @@ public static class BankExtensions
             player.IncBanked(PatchClass.Settings.LuminanceProperty, (int)available);
             player.SendMessage($"Stored {available} luminance.  You now have {player.GetBanked(PatchClass.Settings.LuminanceProperty):N0}.");
         }
+    }
+
+    public static void TransferPyreals(Session session, string amountToken, string targetName)
+    {
+        var player = session.Player;
+        if (player is null)
+            return;
+
+        long amount;
+        if (amountToken.Equals("all", StringComparison.OrdinalIgnoreCase) ||
+            amountToken.Equals("a", StringComparison.OrdinalIgnoreCase))
+        {
+            amount = player.GetBanked(PatchClass.Settings.CashProperty);
+            if (amount <= 0)
+            {
+                player.SendMessage("You have no pyreals banked to transfer.");
+                return;
+            }
+        }
+        else if (!long.TryParse(amountToken, out amount) || amount <= 0)
+        {
+            player.SendMessage("Specify a positive amount or \"all\" to transfer.");
+            return;
+        }
+
+        long stored = player.GetBanked(PatchClass.Settings.CashProperty);
+        if (stored < amount)
+        {
+            player.SendMessage($"Insufficient funds: {amount:N0} > {stored:N0}");
+            return;
+        }
+
+        var target = PlayerManager.GetOnlinePlayer(targetName);
+        if (target is null)
+        {
+            player.SendMessage($"Character '{targetName}' is not online.");
+            return;
+        }
+
+        if (target.Guid == player.Guid)
+        {
+            player.SendMessage("You cannot transfer to yourself.");
+            return;
+        }
+
+        player.IncBanked(PatchClass.Settings.CashProperty, -amount);
+        target.IncBanked(PatchClass.Settings.CashProperty, amount);
+        target.UpdateCoinValue();
+
+        player.SendMessage($"Transferred {amount:N0} pyreals to {target.Name}. You have {player.GetBanked(PatchClass.Settings.CashProperty):N0} banked.");
+        target.SendMessage($"{player.Name} has transferred {amount:N0} pyreals to you. You have {target.GetBanked(PatchClass.Settings.CashProperty):N0} banked.");
     }
 
     public static void WithdrawCurrency(Session session, string currencyName, string amountToken)

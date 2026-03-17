@@ -1,0 +1,94 @@
+{
+  // ─────────────────────────────────────────────
+  // QUEST POINT SYSTEM
+  // ─────────────────────────────────────────────
+
+  // XP bonus per Quest Point, as a percentage.
+  // Multiplier = 1 + (QuestPoints * BonusPerQuestPoint / 100).
+  "BonusPerQuestPoint": 0.5,
+
+  // QP awarded for any quest not listed in QuestBonuses.
+  // Set to 0 to only reward explicitly listed quests.
+  "DefaultPoints": 1.0,
+
+  // Per-quest QP overrides keyed by internal quest name.
+  // Omit or leave empty to use the built-in defaults from Settings.cs.
+  // "QuestBonuses": { "PathwardenComplete": 1.0 },
+
+
+  // ─────────────────────────────────────────────
+  // ACCOUNT-WIDE QUEST TRACKING
+  // ─────────────────────────────────────────────
+
+  // When true, QP and XP multiplier are based on unique quests solved across all characters on the account.
+  "UseAccountWideQuests": true,
+
+
+  // ─────────────────────────────────────────────
+  // COMPLETION BONUS XP
+  // ─────────────────────────────────────────────
+
+  // Master toggle for granting a one-time XP bonus on each quest solve (first and repeat).
+  "EnableCompletionBonusXp": true,
+
+  // Multiplier applied to \"XP needed for next level\" for the completion bonus.
+  // 0.30 = 30% of the current level-up cost.
+  "DefaultCompletionBonusXpMultiplier": 0.30,
+
+  // Optional per-quest overrides for the completion bonus multiplier.
+  // "CompletionBonusXpOverrides": { "SomeQuest": 0.5 },
+
+
+  // ─────────────────────────────────────────────
+  // REPEAT SOLVE BONUS LOOT
+  // ─────────────────────────────────────────────
+
+  // When true, repeat (2nd+) quest solves can award bonus loot from RepeatSolveLoot.json.
+  "EnableRepeatSolveLoot": false,
+
+
+  // ─────────────────────────────────────────────
+  // MILESTONE BROADCASTS
+  // ─────────────────────────────────────────────
+
+  // When true, broadcast a server-wide message when an account hits a milestone unique-quest count.
+  "EnableMilestoneBroadcasts": true,
+
+  // Unique quest counts that trigger milestone rewards and broadcasts.
+  "MilestoneThresholds": [
+    25, 50, 100, 250, 500, 750, 1000,
+    1500, 2000, 2500, 3000, 3500, 4000,
+    4500, 5000, 5500, 6000, 6500, 7000,
+    7500, 8000, 8500, 9000, 9500, 10000
+  ],
+
+  // Percent used in the formula: bonusQP = (MilestoneBonusQPPercent / 100) * MilestoneBonusQPBase.
+  "MilestoneBonusQPPercent": 10.0,
+
+  // Base value used in the milestone bonus formula.
+  "MilestoneBonusQPBase": 100.0,
+
+  // Optional per-threshold overrides. If present, the value is used instead of the formula.
+  // "MilestoneBonusQPOverrides": { "100": 25.0 },
+
+  // Broadcast message format; see Readme for token descriptions.
+  "MilestoneBroadcastFormat": "[Loremaster] {0} has just completed their {1} unique quest and earned {2} bonus quest points!",
+
+
+  // ─────────────────────────────────────────────
+  // QUEST COOLDOWN REDUCTION
+  // ─────────────────────────────────────────────
+
+  // When true, repeat quest cooldowns are reduced by the same percent as the player's XP bonus.
+  "EnableQuestCooldownReduction": true,
+
+  // Cap on cooldown reduction (0–1). 0.95 = at most 95% reduction; null = uncapped.
+  "QuestCooldownReductionCap": 0.95,
+
+  // Quest names that act as one-time flags. Once completed, the player is always eligible and
+  // cooldown reduction does not apply to that quest. Use internal quest names from Quests.txt.
+  "PermanentFlagQuests": [
+    "AcademyTokenGiven"
+  ]
+}
+

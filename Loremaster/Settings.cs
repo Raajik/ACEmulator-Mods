@@ -106,5 +106,8 @@ public class Settings
 
     // Quest names that act as one-time flags (e.g. portal eligibility). Once completed, the player
     // is always considered eligible; cooldown reduction does not apply. Case-sensitive (see Quests.txt).
-    public List<string> PermanentFlagQuests { get; set; } = new();
+    public List<string> PermanentFlagQuests { get; set; } = new()
+    {
+        "AcademyTokenGiven",
+    };
 }

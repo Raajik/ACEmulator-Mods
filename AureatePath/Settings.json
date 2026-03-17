@@ -1,0 +1,9 @@
+{
+  // Placeholder settings file for AureatePath.
+  // The default values and full behavior are defined in Settings.cs; this template is provided
+  // so you can pre-ship a config file and document any overrides you care about.
+  //
+  // To tweak AureatePath, add keys here that match properties on the Settings class.
+  // Any properties you omit will keep their C# defaults.
+}
+

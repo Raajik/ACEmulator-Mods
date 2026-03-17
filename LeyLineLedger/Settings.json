@@ -1,0 +1,21 @@
+{
+  // When true, vendors deposit accepted currency directly into the player's bank properties
+  // instead of paying out coins into inventory.
+  "VendorsUseBank": true,
+
+  // When true, player-to-bank interactions use direct deposit behavior where possible
+  // instead of dropping piles of notes/coins to convert.
+  "DirectDeposit": true,
+
+  // Maximum number of loose coin items (Pyreals) the system will drop on the ground at once
+  // when converting between notes and coins. 0 = no explicit cap.
+  "MaxCoinsDropped": 0,
+
+  // When true, if a deposit would push a tracked bank property above its configured max,
+  // the value is clamped down to that max instead of overflowing.
+  "ExcessSetToMax": true
+
+  // The rest of the settings (Items, Currencies, LuminanceProperty, CashProperty) are defined
+  // with sensible defaults in Settings.cs and only need overriding for custom currency setups.
+}
+

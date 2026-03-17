@@ -1,8 +1,8 @@
-﻿using static AngouriMath.Entity;
+using static AngouriMath.Entity;
 using static AngouriMath.Entity.Number;
 using Complex = AngouriMath.Entity.Number.Complex;
 
-namespace Balance;
+namespace Numbersmith;
 
 public static class AngouriHelpers
 {

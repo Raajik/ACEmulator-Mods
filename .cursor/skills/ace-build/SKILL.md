@@ -36,7 +36,17 @@ Use this skill in this repository when:
        - A generous `block_until_ms` (for example, 600000 or higher) so the build can complete.
    - You may build multiple projects in parallel with the `parallel` tool wrapper when appropriate.
 
-4. **Current known project layout**
+4. **Commit and push after successful builds**
+   - After all targeted projects build successfully:
+     - Run `git status` (in the repo root) and confirm there are no unexpected changes.
+     - Stage changes with `git add .` (or a narrower path if appropriate).
+     - Create a commit with a concise message, for example:
+       - `git commit -m "Build all mods via /ace-build"`
+     - Push to the current branch’s upstream with:
+       - `git push`
+   - Skip commit/push if there are no changes to commit, or if any build failed.
+
+5. **Current known project layout**
    - Always include **AutoLoot** when present. Mod projects inside this repo include (build these):
      - `AutoLoot/AutoLoot.csproj`
      - `AethericWeaver/AethericWeaver.csproj`
@@ -48,7 +58,7 @@ Use this skill in this repository when:
      - `Swarmed/Swarmed.csproj`
    - Do **not** build any project in a directory whose name starts with `CHANGE` (placeholder mods).
 
-5. **Reporting results**
+6. **Reporting results**
    - After running the builds, summarize succinctly:
      - Which mod projects built successfully.
      - Which failed, along with the first relevant error message for each failure.

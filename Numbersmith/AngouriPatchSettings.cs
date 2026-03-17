@@ -1,4 +1,4 @@
-﻿namespace Balance;
+namespace Numbersmith;
 
 public partial class AngouriPatchSettings
 {
@@ -24,7 +24,7 @@ public partial class AngouriPatchSettings
 
     public AngouriMathPatch CreatePatch()
     {
-        var type = Type.GetType($"Balance.Patches.{PatchType}");
+        var type = Type.GetType($"Numbersmith.Patches.{PatchType}");
 
         if (type is null)
         {

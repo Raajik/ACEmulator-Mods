@@ -1,17 +1,18 @@
-﻿using Balance.Patches;
+using Numbersmith.Patches;
 
-namespace Balance;
+namespace Numbersmith;
 
 public class Settings
 {
-    //Additional settings for patches.
-    //Per-patch settings was considered but would require custom JSON converters
+    // Maximum character level Numbersmith uses when overriding ACE's XP curve.
+    // This does NOT change any other mods' caps; it only affects Numbersmith's level/XP patches.
     public uint MaxLevel { get; set; } = 275;
 
-    //Patches will involve a single formula and variable definitions
+    // List of formula-driven patches Numbersmith can apply.
+    // Each entry controls a single patch type, its Enabled flag, and its Formula string.
     public List<AngouriPatchSettings> Formulas { get; set; } = new()
     {
-        //Default formulas in patches.  Not exposing variables/names
+        // Default formulas for each patch. Variable names are documented in each patch class.
         new (nameof(ArmorMod)),
         new (nameof(CripplingBlowImbueMod)),
         new (nameof(CriticalStrikeImbueMod)),
@@ -33,6 +34,6 @@ public class Settings
         new (nameof(PlayerTakeDamageOverTime)),
     };
 
-
+    // When true, Numbersmith logs a summary of which patches were loaded and which formulas are active.
     public bool Verbose { get; set; } = false;
 }

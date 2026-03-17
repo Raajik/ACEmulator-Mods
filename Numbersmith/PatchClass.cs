@@ -1,5 +1,5 @@
-﻿
-namespace Balance;
+
+namespace Numbersmith;
 
 [HarmonyPatch]
 public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : BasicPatch<Settings>(mod, settingsName)
@@ -13,7 +13,7 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
         enabledPatches.Clear();
         bool defaultFormulaUsed = false;
 
-        var sb = new StringBuilder("\n");
+        var sb = new StringBuilder("[Numbersmith] Loaded patches:\n");
         foreach (var patchSettings in Settings.Formulas)
         {
             //Basic check for if the patch is supplying the default formula to the settings.  Settings saved if true
@@ -33,16 +33,25 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
             }
             catch (Exception ex)
             {
-                ModManager.Log($"Failed to patch {patchSettings.PatchType}: {ex.Message}", ModManager.LogLevel.Error);
+                ModManager.Log($"[Numbersmith] Failed to patch {patchSettings.PatchType}: {ex.Message}", ModManager.LogLevel.Error);
                 sb.AppendLine($"Failed to patch {patchSettings.PatchType}:\n  {patch.Formula}");
             }
         }
         if (Settings.Verbose)
             ModManager.Log(sb.ToString());
 
-        //TODO: 
-        //if (defaultFormulaUsed)
-            //SaveSettings();
+        if (defaultFormulaUsed)
+        {
+            try
+            {
+                var path = Path.Combine(ModManager.ModPath, nameof(Numbersmith), "Settings.json");
+                File.WriteAllText(path, System.Text.Json.JsonSerializer.Serialize(Settings, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }));
+            }
+            catch (Exception ex)
+            {
+                ModManager.Log($"[Numbersmith] Failed to save settings with default formulas: {ex.Message}", ModManager.LogLevel.Warn);
+            }
+        }
     }
 
     public override void Stop()

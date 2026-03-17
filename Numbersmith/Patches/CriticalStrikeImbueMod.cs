@@ -1,6 +1,6 @@
 using static ACE.Server.WorldObjects.WorldObject;
 
-namespace Balance.Patches;
+namespace Numbersmith.Patches;
 
 [HarmonyPatch]
 [HarmonyPatchCategory(nameof(CriticalStrikeImbueMod))]

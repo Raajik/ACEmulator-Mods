@@ -3,6 +3,10 @@ namespace Swarmed;
 [HarmonyPatch]
 public static class CallForHelp
 {
+    // Custom PropertyFloat slots for Swarmed reinforcement XP logic
+    const int SwarmedReinforcementXpBonusPropertyId = 40110;
+    const int SwarmedPlayerXpBonusPropertyId = 40111;
+
     [HarmonyPostfix]
     [HarmonyPatch(typeof(Creature), nameof(Creature.Die), new Type[] { typeof(DamageHistoryInfo), typeof(DamageHistoryInfo) })]
     public static void PostDie(DamageHistoryInfo lastDamager, DamageHistoryInfo topDamager, ref Creature __instance)
@@ -13,6 +17,26 @@ public static class CallForHelp
         Settings? settings = PatchClass.CurrentSettings;
         if (settings == null)
             return;
+
+        var reinforcementBonusProp = (PropertyFloat)SwarmedReinforcementXpBonusPropertyId;
+        var playerBonusProp = (PropertyFloat)SwarmedPlayerXpBonusPropertyId;
+
+        double? reinforcementBonus = __instance.GetProperty(reinforcementBonusProp);
+
+        Player? killerPlayer = null;
+        if (lastDamager != null && lastDamager.IsPlayer)
+            killerPlayer = lastDamager.TryGetPetOwnerOrAttacker() as Player;
+
+        if (reinforcementBonus.HasValue && killerPlayer != null)
+        {
+            double bonusValue = reinforcementBonus.Value;
+            if (bonusValue > 0)
+            {
+                killerPlayer.SetProperty(playerBonusProp, bonusValue);
+            }
+
+            return;
+        }
 
         bool isDungeon = __instance.CurrentLandblock?.IsDungeon ?? false;
         bool landscape = !isDungeon;
@@ -38,6 +62,11 @@ public static class CallForHelp
         string creatureName = __instance.Name ?? "creature";
         var deathLocation = __instance.Location;
         uint originalMaxHealth = __instance.Health?.MaxValue ?? 1;
+
+        int maxCallerHealth = settings.MaxCallerHealth;
+        if (maxCallerHealth > 0 && originalMaxHealth > maxCallerHealth)
+            return;
+
         float originalScale = __instance.ObjScale ?? 1f;
 
         Weenie? weenie = DatabaseManager.World.GetCachedWeenie(wcid);
@@ -61,6 +90,11 @@ public static class CallForHelp
         if (scaleMin > scaleMax)
             (scaleMin, scaleMax) = (scaleMax, scaleMin);
 
+        float xpBonusMin = Math.Clamp(settings.ReinforcementXpBonusMin, 0f, 10f);
+        float xpBonusMax = Math.Clamp(settings.ReinforcementXpBonusMax, 0f, 10f);
+        if (xpBonusMin > xpBonusMax)
+            (xpBonusMin, xpBonusMax) = (xpBonusMax, xpBonusMin);
+
         for (int i = 0; i < count; i++)
         {
             ObjectGuid guid = GuidManager.NewDynamicGuid();
@@ -78,7 +112,38 @@ public static class CallForHelp
             creature.Health.Current = newMaxHealth;
             float scaleMult = (float)ThreadSafeRandom.Next(scaleMin, scaleMax);
             creature.ObjScale = originalScale * scaleMult;
+
+            if (xpBonusMax > 0f)
+            {
+                float bonus = (float)ThreadSafeRandom.Next(xpBonusMin, xpBonusMax);
+                if (bonus > 0f)
+                    creature.SetProperty(reinforcementBonusProp, bonus);
+            }
+
             LandblockManager.AddObject(creature);
         }
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Player), nameof(Player.GrantXP), new Type[] { typeof(long), typeof(XpType), typeof(ShareType) })]
+    public static void PreGrantXP(ref long amount, XpType xpType, ShareType shareType, ref Player __instance)
+    {
+        if (xpType != XpType.Kill)
+            return;
+
+        var playerBonusProp = (PropertyFloat)SwarmedPlayerXpBonusPropertyId;
+        double? bonus = __instance.GetProperty(playerBonusProp);
+        if (!bonus.HasValue || bonus.Value <= 0)
+            return;
+
+        long extra = (long)(amount * bonus.Value);
+        if (extra <= 0)
+        {
+            __instance.RemoveProperty(playerBonusProp);
+            return;
+        }
+
+        amount += extra;
+        __instance.RemoveProperty(playerBonusProp);
     }
 }

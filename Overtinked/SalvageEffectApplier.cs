@@ -43,6 +43,47 @@ public static class SalvageEffectApplier
         return Random.Shared.Next(min, max + 1);
     }
 
+    public static string GetEffectDescription(SalvageTinkerRule rule, int value, bool isFailure)
+    {
+        int signed = isFailure ? -value : value;
+        string kind = rule.EffectKind ?? "";
+        switch (kind)
+        {
+            case "Damage":
+                return $"Damage {(signed >= 0 ? "+" : "")}{signed}";
+            case "DamageVariance":
+                return signed >= 0 ? "Damage variance reduced" : "Damage variance increased";
+            case "WeaponSpeed":
+                return signed >= 0
+                    ? $"Weapon speed faster by {signed}"
+                    : $"Weapon speed slower by {Math.Abs(signed)}";
+            case "ArmorLevel":
+                return $"Armor Level {(signed >= 0 ? "+" : "")}{signed}";
+            case "DamageMod":
+                return $"Damage modifier {(signed >= 0 ? "+" : "")}{signed}%";
+            case "WeaponDefense":
+                return $"Weapon defense {(signed >= 0 ? "+" : "")}{signed}%";
+            case "WeaponOffense":
+                return $"Weapon offense {(signed >= 0 ? "+" : "")}{signed}%";
+            case "ArmorModVsAcid":
+                return $"Armor vs Acid {(signed >= 0 ? "+" : "")}{signed}%";
+            case "ArmorModVsSlash":
+                return $"Armor vs Slash {(signed >= 0 ? "+" : "")}{signed}%";
+            case "ArmorModVsBludgeon":
+                return $"Armor vs Bludgeon {(signed >= 0 ? "+" : "")}{signed}%";
+            case "ArmorModVsFire":
+                return $"Armor vs Fire {(signed >= 0 ? "+" : "")}{signed}%";
+            case "ArmorModVsCold":
+                return $"Armor vs Cold {(signed >= 0 ? "+" : "")}{signed}%";
+            case "ArmorModVsElectric":
+                return $"Armor vs Electric {(signed >= 0 ? "+" : "")}{signed}%";
+            case "ArmorModVsPierce":
+                return $"Armor vs Pierce {(signed >= 0 ? "+" : "")}{signed}%";
+            default:
+                return string.Empty;
+        }
+    }
+
     public static bool ApplyEffect(WorldObject target, SalvageTinkerRule rule, int value, bool isFailure)
     {
         int v = isFailure ? -value : value;
@@ -93,6 +134,9 @@ public static class SalvageEffectApplier
                 return true;
             case "ArmorModVsElectric":
                 target.ArmorModVsElectric = (target.ArmorModVsElectric ?? 1f) + (v / 100f);
+                return true;
+            case "ArmorModVsPierce":
+                target.ArmorModVsPierce = (target.ArmorModVsPierce ?? 1f) + (v / 100f);
                 return true;
             default:
                 return false;

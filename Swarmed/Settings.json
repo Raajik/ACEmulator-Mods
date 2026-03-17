@@ -1,16 +1,33 @@
 {
+  // Master toggle for call-for-help reinforcements in landscape landblocks.
   "LandscapeEnabled": true,
+  // Chance (0.0–1.0) that a landscape creature calls for help on death.
   "LandscapeChance": 0.15,
+  // Minimum number of reinforcements to spawn in landscape when the event triggers.
   "LandscapeSpawnMin": 1,
+  // Maximum number of reinforcements to spawn in landscape when the event triggers.
   "LandscapeSpawnMax": 5,
+
+  // Master toggle for call-for-help reinforcements in dungeons.
   "DungeonEnabled": false,
+  // Chance (0.0–1.0) that a dungeon creature calls for help on death.
   "DungeonChance": 0.15,
+  // Minimum number of reinforcements to spawn in dungeons when the event triggers.
   "DungeonSpawnMin": 1,
+  // Maximum number of reinforcements to spawn in dungeons when the event triggers.
   "DungeonSpawnMax": 3,
+
+  // Fraction of the original creature's max health used as a lower bound for reinforcement max health.
   "ReinforcementHealthMin": 0.3,
+  // Fraction of the original creature's max health used as an upper bound for reinforcement max health.
   "ReinforcementHealthMax": 0.7,
+
+  // Fraction of the original creature's scale used as a lower bound for reinforcement size.
   "ReinforcementScaleMin": 0.1,
+  // Fraction of the original creature's scale used as an upper bound for reinforcement size.
   "ReinforcementScaleMax": 0.8,
+
+  // Flavor messages broadcast when reinforcements are triggered. {0} is replaced with the creature's name.
   "CallForHelpMessages": [
     "The {0} cries out for help!",
     "The {0} howls for its kin!",

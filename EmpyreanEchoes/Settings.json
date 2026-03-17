@@ -1,0 +1,75 @@
+{
+  // When true, logs extra information from features and mutators to the server console.
+  "Verbose": false,
+
+  // Core feature list. Most servers should keep CreatureEx and MutatorHooks enabled.
+  "Features": [
+    "CreatureEx",
+    "MutatorHooks"
+  ],
+
+  // Which CreatureEx variants are active (used as Harmony patch categories).
+  "CreatureFeatures": [
+    "Horde"
+  ],
+
+  // Maximum seconds between deaths allowed for Hardcore characters before they are considered failed.
+  "HardcoreSecondsBetweenDeathAllowed": 60.0,
+
+  // Number of lives Hardcore characters start with.
+  "HardcoreStartingLives": 5,
+
+  // Global chance (0.0–1.0) that a normal creature is replaced by a random CreatureEx type.
+  "CreatureChance": 0.0,
+
+  // Loot profile path for EmpyreanEchoes-specific loot configs (used by some helper features).
+  "LootProfilePath": "LootProfiles",
+
+  // When true, uses the player's username when resolving loot profile files under LootProfilePath.
+  "LootProfileUseUsername": true,
+
+  // Proc rate overrides for cloak procs and Aetheria procs (0.0–1.0).
+  "CloakProcRate": 0.05,
+  "AetheriaProcRate": 0.05,
+
+  // GrowthItem mutator settings: XP and level ranges per treasure tier.
+  "GrowthXpBase": 1000000,
+  "GrowthXpScaleByTier": 1.2,
+
+  // LootGrowthItem mutator settings: generalized loot leveling and optional pre-imbues.
+  "EnableLootItemLeveling": true,
+  "EnableLootItemPreImbue": true,
+  "LootItemXpBase": 1000000,
+  "LootItemXpScale": 1.2,
+  "LootItemMaxLevelMin": 2,
+  "LootItemMaxLevelMax": 6,
+
+  // Chance (0.0–1.0) that an eligible item receives a pre-imbue when LootGrowthItem runs.
+  "LootItemPreImbueChance": 0.02,
+
+  // WeenieTypes that are eligible for LootGrowthItem leveling by default.
+  "LootItemLevelingEligibleWeenieTypes": [
+    "MeleeWeapon",
+    "MissileLauncher",
+    "Caster",
+    "Clothing"
+  ],
+
+  // Slayer mutator defaults: which CreatureTypeGroup to use and how strong each tier is.
+  "Slayers": "Popular",
+  "SlayerPower": {
+    "0": 0.5,
+    "1": 1.0,
+    "2": 1.5,
+    "3": 2.0,
+    "4": 2.5,
+    "5": 3.0,
+    "6": 3.5,
+    "7": 4.0,
+    "8": 4.5
+  },
+
+  // Spell group used for ProcOnHit / ProcOnAttack cloak-style procs.
+  "ProcOnSpells": "CloakOnly"
+}
+

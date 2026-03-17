@@ -1,0 +1,22 @@
+{
+  // Maximum character level Numbersmith will consider when overriding ACE's XP and level curve.
+  // This does NOT change caps from other mods; it only affects Numbersmith patches.
+  "MaxLevel": 275,
+
+  // When true, logs which patches loaded and which formulas are active at startup.
+  "Verbose": false
+
+  // Formulas for individual patches are defined in code defaults.
+  // To override them, add a \"Formulas\" array here with entries like:
+  //
+  // \"Formulas\": [
+  //   {
+  //     \"PatchType\": \"WeaponCriticalChance\",
+  //     \"Enabled\": true,
+  //     \"Formula\": \"x + 0.01 * r\"
+  //   }
+  // ]
+  //
+  // See the Numbersmith Readme and patch classes under Patches/ for variable names per patch.
+}
+

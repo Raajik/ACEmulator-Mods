@@ -32,15 +32,19 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
         // Recalculate QP for all online players on reload/start
         UpdateIngamePlayers();
 
-        // When Settings.json changes, reload and recalc QP for all online players
+        // When Settings.json changes, reload and recalc QP for all online players.
+        // Skip watcher if mod folder path is empty (e.g. assembly loaded without a file location).
         _settingsWatcher?.Dispose();
-        _settingsWatcher = new FileSystemWatcher(modFolder)
+        if (!string.IsNullOrEmpty(modFolder) && Directory.Exists(modFolder))
         {
-            Filter = "Settings.json",
-            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
-        };
-        _settingsWatcher.Changed += OnSettingsFileChanged;
-        _settingsWatcher.EnableRaisingEvents = true;
+            _settingsWatcher = new FileSystemWatcher(modFolder)
+            {
+                Filter = "Settings.json",
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
+            };
+            _settingsWatcher.Changed += OnSettingsFileChanged;
+            _settingsWatcher.EnableRaisingEvents = true;
+        }
     }
 
     public override void Stop()

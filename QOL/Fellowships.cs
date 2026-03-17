@@ -202,10 +202,10 @@ public class Fellowships
 
             foreach (var p in list)
             {
+                if (S.Settings.Fellowship.StopAtMaxFellowshipInvite && player.Fellowship.FellowshipMembers.Count >= S.Settings.Fellowship.MaxMembers)
+                    break;
                 player.Fellowship.AddFellowshipMember(player, p);
                 player.SendMessage($"Inviting {p.Name}");
-
-                //Todo: stop at max?
             }
         }
         catch (Exception ex) { ModManager.Log(ex.Message, ModManager.LogLevel.Error); }
@@ -217,6 +217,9 @@ public class FellowshipSettings
     // Sends a message to inviter and new member showing fellowship name and XP share % on invite
     public bool SendDetails { get; set; } = true;
     public int MaxMembers { get; set; } = 30;
+
+    // When true, /fship stops inviting after reaching MaxMembers
+    public bool StopAtMaxFellowshipInvite { get; set; } = true;
 
     // When true, bypasses the server's "busy" check and auto-accepts fellowship invites without the usual busy rejection
     public bool IgnoreBusy { get; set; } = true;

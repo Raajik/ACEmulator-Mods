@@ -1,4 +1,4 @@
-namespace Balance.Patches;
+namespace Numbersmith.Patches;
     [HarmonyPatch]
     [HarmonyPatchCategory(nameof(PlayerPowerMod))]
     public class PlayerPowerMod : AngouriMathPatch

@@ -43,6 +43,7 @@
   "Fellowship": {
     "SendDetails": true,
     "MaxMembers": 30,
+    "StopAtMaxFellowshipInvite": true,
     "IgnoreBusy": false,
     "OverrideSharePercent": true,
     "// FlatSharePercent": "XP share fraction applied to all members when OverrideSharePercent is true. 1.0 = 100%, 0.5 = 50%.",

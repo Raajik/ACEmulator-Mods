@@ -1,6 +1,6 @@
-﻿namespace Balance;
+namespace Numbersmith;
 
 public class Mod : BasicMod
 {
-    public Mod() : base() => Setup(nameof(Balance), new PatchClass(this));
+    public Mod() : base() => Setup(nameof(Numbersmith), new PatchClass(this));
 }

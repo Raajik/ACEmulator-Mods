@@ -1,4 +1,4 @@
-﻿namespace Balance.Patches;
+namespace Numbersmith.Patches;
 
 [HarmonyPatch]
 [HarmonyPatchCategory(nameof(LevelCost))]
@@ -36,9 +36,9 @@ public class LevelCost : AngouriMathPatch
         {
             updateXpVitaeMethod = AccessTools.Method(typeof(Player), "UpdateXpVitae", new Type[] { typeof(long) });
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            ModManager.Log("Error accessing private Player method 'UpdateXpVitae'");
+            ModManager.Log("[Numbersmith] Error accessing private Player method 'UpdateXpVitae'");
         }
 
         //Reset total cost cache

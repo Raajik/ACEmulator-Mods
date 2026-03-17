@@ -1,0 +1,26 @@
+{
+  // Master toggle for the Swiftmend heal-over-time system.
+  "Enabled": true,
+
+  // Total duration in seconds of the heal-over-time effect applied by Swiftmend.
+  "HotDurationSeconds": 30.0,
+
+  // Time in seconds between each heal tick.
+  "HotTickSeconds": 3.0,
+
+  // Base percentage of the caster's relevant healing skill restored each tick (0.0–1.0).
+  "BaseSkillPercentPerTick": 0.03,
+
+  // Multiplier applied when the healing skill is specialized (e.g. double effectiveness).
+  "SpecializedMultiplier": 2.0,
+
+  // When true, enables Swiftmend behavior for health kits.
+  "EnableHealthKits": true,
+
+  // When true, enables Swiftmend behavior for stamina kits.
+  "EnableStaminaKits": true,
+
+  // When true, enables Swiftmend behavior for mana kits.
+  "EnableManaKits": true
+}
+

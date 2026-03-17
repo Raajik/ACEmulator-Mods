@@ -278,13 +278,7 @@ namespace AethericWeaver;
         Number = db.Number;
         NumberVariance = db.NumberVariance;
 
-        //TODO: Property write Vector3 / Lists
-        //CreateOffset = db.CreateOffsetOriginX is null ? null : default;
-        //new Vector3(db.CreateOffsetOriginX ?? 0.0f, db.CreateOffsetOriginY ?? 0.0f, db.CreateOffsetOriginZ ?? 0.0f);
-        //Padding = db.PaddingOriginX is null ? null : //default;
-        //new Vector3(db.PaddingOriginX ?? 0.0f, db.PaddingOriginY ?? 0.0f, db.PaddingOriginZ ?? 0.0f);
-        //Peturbation = db.PeturbationOriginX is null ? null : //default;
-        //    new Vector3(db.PeturbationOriginX ?? 0.0f, db.PeturbationOriginY ?? 0.0f, db.PeturbationOriginZ ?? 0.0f);
+        // Vector3 properties read from spell; Apply() writes them to db when non-null
         CreateOffset = spell.CreateOffset;
         Padding = spell.Padding;
         Peturbation = spell.Peturbation;

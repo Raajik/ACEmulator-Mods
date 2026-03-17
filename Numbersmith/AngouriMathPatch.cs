@@ -1,4 +1,4 @@
-﻿namespace Balance;
+namespace Numbersmith;
 
 [HarmonyPatch]
 [HarmonyPatchCategory(nameof(AngouriMathPatch))]

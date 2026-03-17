@@ -1,0 +1,26 @@
+{
+  // When true, AethericWeaver will automatically load and apply the spell spreadsheet on world open.
+  "AutoloadSpreadsheet": true,
+
+  // Path to the Excel file containing spell customizations. Relative paths are resolved from the mod folder.
+  "Spreadsheet": "Spells.xlsx",
+
+  // Custom spell definitions. Each entry clones a template spell, applies overrides, and optionally
+  // assigns a new Id for the final spell key. This array is advanced and mostly intended for authors;
+  // most servers will configure spells via the Spreadsheet instead.
+  //
+  // Example structure:
+  // "CustomSpells": [
+  //   {
+  //     "TemplateId": "StrengthSelf1",
+  //     "Id": "StrengthSelf1",
+  //     "Name": "Lesser Strength I",
+  //     "StatModVal": 5,
+  //     "TargetEffect": "LevelUp"
+  //   }
+  // ]
+  //
+  // Leave commented out to use only the defaults from Settings.cs and the spreadsheet.
+  // "CustomSpells": []
+}
+

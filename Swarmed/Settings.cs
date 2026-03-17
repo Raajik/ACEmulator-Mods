@@ -4,7 +4,7 @@ namespace Swarmed;
 public class Settings
 {
     public bool LandscapeEnabled { get; set; } = true;
-    public float LandscapeChance { get; set; } = 0.15f;
+    public float LandscapeChance { get; set; } = 0.10f;
     public int LandscapeSpawnMin { get; set; } = 1;
     public int LandscapeSpawnMax { get; set; } = 5;
 
@@ -16,8 +16,13 @@ public class Settings
     public float ReinforcementHealthMin { get; set; } = 0.3f;
     public float ReinforcementHealthMax { get; set; } = 0.7f;
 
-    public float ReinforcementScaleMin { get; set; } = 0.1f;
+    public float ReinforcementScaleMin { get; set; } = 0.3f;
     public float ReinforcementScaleMax { get; set; } = 0.8f;
+
+    public int MaxCallerHealth { get; set; } = 3000;
+
+    public float ReinforcementXpBonusMin { get; set; } = 0.75f;
+    public float ReinforcementXpBonusMax { get; set; } = 2.0f;
 
     // Format string: {0} = creature name. One chosen at random when the event triggers.
     public List<string> CallForHelpMessages { get; set; } = new()

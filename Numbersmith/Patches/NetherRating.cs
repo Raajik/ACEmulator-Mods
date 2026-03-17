@@ -1,6 +1,6 @@
-﻿using ACE.Server.WorldObjects.Managers;
+using ACE.Server.WorldObjects.Managers;
 
-namespace Balance.Patches;
+namespace Numbersmith.Patches;
 
 [HarmonyPatch]
 [HarmonyPatchCategory(nameof(NetherRating))]

@@ -1,0 +1,20 @@
+{
+  // Path where .utl loot profile files are stored.
+  // Leave commented to use the built-in default under this mod’s folder.
+  // Example: "C:\\ACE\\Mods\\AutoLoot\\LootProfiles"
+  // "LootProfilePath": "C:\\ACE\\Mods\\AutoLoot\\LootProfiles",
+
+  // Name of the profile that is automatically enabled the first time a player uses /autoloot in a session.
+  // Set to an empty string ("") to start all players with no profiles active.
+  "DefaultProfile": "PyrealsTradeNotes.utl",
+
+  // Item name substrings that should never be looted more than once per WCID.
+  // If the player already has an item with the same WCID and its name contains one of these,
+  // AutoLoot will skip it to avoid stockpiling quest pieces ahead of timers.
+  "NoDuplicateNames": [
+    "Pincer",
+    "Tusk",
+    "Matron"
+  ]
+}
+

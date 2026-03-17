@@ -1,12 +1,19 @@
 {
-  "MaxTries": 3,
+  // Maximum tinkers allowed per item (NumTimesTinkered). Recipe checks use MaxTries - 1.
+  "MaxTries": 50,
+  // Difficulty step added for each extra tinker tier when extending RecipeManager.TinkeringDifficulty.
   "Scale": 0.5,
-  "MaxImbueEffects": 2,
+  // Maximum number of imbues allowed on an item (bit-count of ImbuedEffect flags).
+  "MaxImbueEffects": 5,
+  // When true, uses Overtinked's custom tinkering flow for RecipeManager.UseObjectOnTarget.
   "EnableRecipeManagerPatch": true,
-  "EnableFailureRedesign": false,
-  "EnableDefaultImbueFailureWorkmanship": false,
-  "ShowPlayerSalvageMessage": false,
-  "// SalvageRules": "Per-salvage numeric effects. Use both WCIDs for quest-reward pairs (e.g. Iron 20986; Steel 20993 and 29581).",
+  // When true, failed numeric tinkers apply the opposite effect (e.g. -Damage) instead of destroying the item.
+  "EnableFailureRedesign": true,
+  // When true, failed imbue tinkers add +1 Workmanship (up to a cap of 10) instead of destroying the item.
+  "EnableDefaultImbueFailureWorkmanship": true,
+  // When true, send chat messages to the player when a custom salvage/imbue effect is applied.
+  "ShowPlayerSalvageMessage": true,
+  // Per-salvage numeric effects. Use both WCIDs for quest-reward pairs (e.g. Iron 20986; Steel 20993 and 29581).
   "SalvageRules": [
     {
       "Wcids": [ 20986 ],
@@ -43,9 +50,99 @@
       "MaxValue": 50,
       "FixedValue": null,
       "Enabled": true
+    },
+    {
+      "Wcids": [ 20981 ],
+      "Name": "Armoredillo Hide",
+      "EffectKind": "ArmorModVsAcid",
+      "MinValue": 40,
+      "MaxValue": 40,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 20982 ],
+      "Name": "Bronze",
+      "EffectKind": "ArmorModVsSlash",
+      "MinValue": 20,
+      "MaxValue": 20,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 20983 ],
+      "Name": "Ceramic",
+      "EffectKind": "ArmorModVsFire",
+      "MinValue": 40,
+      "MaxValue": 40,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 21061 ],
+      "Name": "Marble",
+      "EffectKind": "ArmorModVsBludgeon",
+      "MinValue": 20,
+      "MaxValue": 20,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 20991 ],
+      "Name": "Reedshark Hide",
+      "EffectKind": "ArmorModVsElectric",
+      "MinValue": 40,
+      "MaxValue": 40,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 20995 ],
+      "Name": "Wool",
+      "EffectKind": "ArmorModVsCold",
+      "MinValue": 40,
+      "MaxValue": 40,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 21042 ],
+      "Name": "Brass",
+      "EffectKind": "WeaponDefense",
+      "MinValue": 1,
+      "MaxValue": 1,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 20988 ],
+      "Name": "Mahogany",
+      "EffectKind": "DamageMod",
+      "MinValue": 4,
+      "MaxValue": 4,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 20994 ],
+      "Name": "Velvet",
+      "EffectKind": "WeaponOffense",
+      "MinValue": 1,
+      "MaxValue": 1,
+      "FixedValue": null,
+      "Enabled": true
+    },
+    {
+      "Wcids": [ 21050 ],
+      "Name": "Green Garnet",
+      "EffectKind": "DamageMod",
+      "MinValue": 1,
+      "MaxValue": 1,
+      "FixedValue": null,
+      "Enabled": true
     }
   ],
-  "// BleedImbue": "Serpentine (21075). Stacking DoT; combat tick logic can read BleedImbue config.",
+  // Serpentine (21075). Stacking Bleed DoT; DamagePerTick × stacks applied every TickIntervalSeconds.
   "BleedImbue": {
     "SalvageWcids": [ 21075 ],
     "Name": "Bleed",
@@ -54,19 +151,19 @@
     "MaxStacks": 10,
     "TickIntervalSeconds": 1.0
   },
-  "// CleavingImbue": "Tiger Eye (21081).",
+  // Tiger Eye (21081). Cleaving-style custom imbue hook; behavior is defined in combat patches.
   "CleavingImbue": {
     "SalvageWcids": [ 21081 ],
     "Name": "Cleaving",
     "Enabled": true
   },
-  "// NetherRendingImbue": "Onyx (21064).",
+  // Onyx (21064). Nether Rending-style custom imbue hook; behavior is defined in combat patches.
   "NetherRendingImbue": {
     "SalvageWcids": [ 21064 ],
     "Name": "Nether Rending",
     "Enabled": true
   },
-  "// BuffedImbueRules": "Replace default jewelry imbues with stronger ranges (e.g. Hematite +25-50 HP).",
+  // Replace default jewelry imbues with stronger ranges (e.g. Hematite +25–50 HP, optional secondary bonuses).
   "BuffedImbueRules": [
     {
       "Wcids": [ 21053 ],

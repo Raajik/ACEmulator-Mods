@@ -1,0 +1,68 @@
+{
+  // ─────────────────────────────────────────────
+  // SKILL USAGE XP TWEAKS
+  // ─────────────────────────────────────────────
+
+  // Master toggles for enabling special proficiency XP for each skill family.
+  "EnableArcaneLore": true,
+  "EnableAssessCreaturePerson": true,
+  "EnableDeception": true,
+  "EnableDualWield": true,
+  "EnableLeadershipLoyalty": true,
+
+  // Global multiplier applied to all special proficiency XP grants from Aptitude.
+  "ProficiencyXpMultiplier": 1.0,
+
+  // Arcane Lore: XP granted per point of mana spent on eligible actions.
+  "ArcaneLoreXpPerMana": 0.01,
+
+  // Assess Creature/Person: XP granted per successful identify.
+  "AssessXpPerIdentify": 50.0,
+
+  // Deception: XP granted per qualifying sneak attack.
+  "DeceptionXpPerSneakAttack": 25.0,
+
+  // Dual Wield: XP granted per qualifying dual-wield attack.
+  "DualWieldXpPerAttack": 10.0,
+
+  // Leadership/Loyalty: XP granted per minute while meeting the leadership conditions.
+  "LeadershipLoyaltyXpPerMinute": 15.0,
+
+  // Tick interval in seconds for Leadership/Loyalty XP checks.
+  "LeadershipLoyaltyTickSeconds": 60,
+
+
+  // ─────────────────────────────────────────────
+  // REWARDS & MILESTONES
+  // ─────────────────────────────────────────────
+
+  // When true, skill usage can award bonus skill credits at configured milestone levels.
+  "EnableBonusSkillCredits": true,
+
+  // When true, tracking of mastery tiers (number of maxed skills) is enabled.
+  "EnableMasteryTiers": true,
+
+  // When true, adds an efficiency bonus for attributes/vitals once certain mastery thresholds are met.
+  "EnableAttributeVitalEfficiency": true,
+
+  // Multiplier applied to attribute/vital efficiency when the bonus is active.
+  "AttributeVitalEfficiencyMultiplier": 1.05,
+
+  // Character levels at which extra skill credits are awarded.
+  "SkillCreditMilestoneLevels": [ 50, 100, 150, 200, 275 ],
+
+  // Character levels at which cosmetic titles are awarded.
+  "TitleMilestoneLevels": [ 50, 100, 200, 275 ],
+
+  // Names of titles corresponding to TitleMilestoneLevels.
+  "TitleMilestoneNames": [
+    "OSRS Enjoyer",
+    "Aptitude Adept",
+    "Master of Practice",
+    "Aptitude Paragon"
+  ],
+
+  // Number of mastered skills required for each mastery tier.
+  "MasteryTierSkillCounts": [ 5, 10, 20 ]
+}
+

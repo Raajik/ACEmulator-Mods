@@ -15,6 +15,7 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
         Settings = SettingsContainer.Settings;
         CurrentSettings = Settings;
 
+        // Build salvage lookup and extend tinkering difficulty table.
         SalvageEffectApplier.BuildLookup(Settings);
         ModifyTinkering();
 
@@ -182,7 +183,11 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
             {
                 RecipeManager.HandleTinkerLog(source, target);
                 if (s.ShowPlayerSalvageMessage)
-                    player.SendMessage($"Your {target.NameWithMaterial}: {rule.EffectKind} {(value >= 0 ? "+" : "")}{value}.");
+                {
+                    string desc = SalvageEffectApplier.GetEffectDescription(rule, value, isFailure: false);
+                    if (!string.IsNullOrEmpty(desc))
+                        player.SendMessage($"Your {target.NameWithMaterial}: {desc}.", ChatMessageType.Craft);
+                }
                 ModManager.Log($"[Overtinked] {player?.Name} applied {rule.Name ?? wcid.ToString()} -> {rule.EffectKind} {value} on {target.Guid}", ModManager.LogLevel.Debug);
                 __result = true;
                 return false;
@@ -277,7 +282,11 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
         int magnitude = rule.FixedValue ?? (rule.MinValue + rule.MaxValue) / 2;
         if (SalvageEffectApplier.ApplyEffect(target, rule, magnitude, isFailure: true))
         {
-            player.Session?.Network?.EnqueueSend(new GameMessageSystemChat($"Your tinkering failed! The {target.NameWithMaterial} is now slightly worse.", ChatMessageType.Craft));
+            string desc = SalvageEffectApplier.GetEffectDescription(rule, magnitude, isFailure: true);
+            if (!string.IsNullOrEmpty(desc))
+                player.Session?.Network?.EnqueueSend(new GameMessageSystemChat($"Your tinkering failed! The {target.NameWithMaterial} was damaged: {desc}.", ChatMessageType.Craft));
+            else
+                player.Session?.Network?.EnqueueSend(new GameMessageSystemChat($"Your tinkering failed! The {target.NameWithMaterial} is now slightly worse.", ChatMessageType.Craft));
             ModManager.Log($"[Overtinked] Failure redesign: {player.Name} applied opposite {rule.EffectKind} -{magnitude} on {target.Guid}");
         }
         target.SetProperty(PropertyInt.NumTimesTinkered, numTimesTinkered);
@@ -339,6 +348,301 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
         if (bonusRating <= 0)
             return;
         __result *= (float)(1.0 + bonusRating / 100.0);
+    }
+
+    // Quest-item tagging properties (use IDs above 40000 to avoid collisions).
+    private static readonly PropertyBool QuestGrowthItemBool = (PropertyBool)40100;
+    private static readonly PropertyBool QuestItemInitializedBool = (PropertyBool)40101;
+    private static readonly PropertyInt QuestItemCategoryInt = (PropertyInt)40102;
+
+    // Postfix: run on all new WorldObject creations; quest items are initialized here.
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(WorldObjectFactory), nameof(WorldObjectFactory.CreateNewWorldObject), new Type[] { typeof(uint) })]
+    public static void PostCreateNewWorldObject(uint weenieClassId, ref WorldObject __result)
+    {
+        if (__result == null)
+            return;
+
+        Settings? s = CurrentSettings;
+        if (s == null)
+            return;
+
+        // Only operate on items that we consider to be quest items.
+        if (!IsQuestItem(__result))
+            return;
+
+        // Ensure we only initialize a quest item once.
+        bool? alreadyInit = __result.GetProperty(QuestItemInitializedBool);
+        if (alreadyInit == true)
+            return;
+
+        __result.SetProperty(QuestItemInitializedBool, true);
+
+        if (s.EnableQuestItemWorkmanship)
+            InitializeQuestItemWorkmanship(__result, s);
+
+        if (s.EnableQuestItemInitialEffects)
+            ApplyInitialQuestItemEffects(__result, s);
+
+        if (s.EnableQuestItemLeveling)
+            InitializeQuestItemXp(__result, s);
+    }
+
+    // Central predicate for whether a WorldObject should be treated as a quest item.
+    private static bool IsQuestItem(WorldObject item)
+    {
+        // Currently conservative: treat no items as quest items by default in builds where explicit quest flags are unavailable.
+        return false;
+    }
+
+    private static void InitializeQuestItemWorkmanship(WorldObject item, Settings s)
+    {
+        int current = GetWorkmanship(item);
+        if (current > 0)
+            return;
+
+        int min = s.QuestItemWorkmanshipMin;
+        int max = s.QuestItemWorkmanshipMax;
+        if (min > max)
+            (min, max) = (max, min);
+
+        int rolled = min == max ? min : Random.Shared.Next(min, max + 1);
+        if (rolled < 0)
+            rolled = 0;
+
+        SetWorkmanship(item, rolled);
+    }
+
+    private static void InitializeQuestItemXp(WorldObject item, Settings s)
+    {
+        if (item.HasItemLevel)
+            return;
+
+        // Avoid double-dipping with CHANGEExpansion growth items.
+        bool? isGrowthItem = item.GetProperty(FakeBool.GrowthItem);
+        if (isGrowthItem == true)
+            return;
+
+        int minLevel = s.QuestItemMaxLevelMin;
+        int maxLevel = s.QuestItemMaxLevelMax;
+        if (minLevel > maxLevel)
+            (minLevel, maxLevel) = (maxLevel, minLevel);
+
+        int maxItemLevel = minLevel == maxLevel ? minLevel : Random.Shared.Next(minLevel, maxLevel + 1);
+        if (maxItemLevel <= 0)
+            return;
+
+        long baseXp = s.QuestItemXpBase;
+        if (baseXp <= 0)
+            baseXp = 1_000_000;
+
+        item.ItemXpStyle = ItemXpStyle.ScalesWithLevel;
+        item.ItemTotalXp = 0;
+        item.ItemMaxLevel = maxItemLevel;
+        item.ItemBaseXp = baseXp;
+
+        // Tag as a quest-growth item and store a simple category hint by WeenieType.
+        item.SetProperty(QuestGrowthItemBool, true);
+        item.SetProperty(QuestItemCategoryInt, (int)item.WeenieType);
+    }
+
+    // Prefix: when a quest-growth item levels up, grant an additional quest-item effect per level.
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(Player), nameof(Player.OnItemLevelUp), new Type[] { typeof(WorldObject), typeof(int) })]
+    public static void PreOnItemLevelUpQuestItems(WorldObject item, int prevItemLevel, ref Player __instance)
+    {
+        if (item == null)
+            return;
+
+        Settings? s = CurrentSettings;
+        if (s == null || !s.EnableQuestItemLeveling)
+            return;
+
+        // Only handle items tagged as quest-growth and not standard growth items.
+        bool? questGrowth = item.GetProperty(QuestGrowthItemBool);
+        if (questGrowth != true)
+            return;
+
+        bool? growthItem = item.GetProperty(FakeBool.GrowthItem);
+        if (growthItem == true)
+            return;
+
+        int currentLevel = item.ItemLevel ?? 0;
+        if (currentLevel <= prevItemLevel)
+            return;
+
+        for (int level = prevItemLevel + 1; level <= currentLevel; level++)
+        {
+            ApplyQuestItemLevelUpEffect(item, level, __instance, s);
+        }
+    }
+
+    private static void ApplyQuestItemLevelUpEffect(WorldObject item, int level, Player player, Settings s)
+    {
+        QuestItemEffectSettings cfg = s.QuestItemEffects ?? new QuestItemEffectSettings();
+
+        // For level-ups, slightly bias further toward imbues and slayer.
+        int imbueWeight = (cfg.AllowStandardImbues || cfg.AllowCustomImbues) ? cfg.ImbueWeight + 1 : 0;
+        int slayerWeight = cfg.AllowSlayer ? cfg.SlayerWeight + 1 : 0;
+        int salvageWeight = cfg.AllowSalvageLikeBoosts ? cfg.SalvageWeight : 0;
+
+        int totalWeight = Math.Max(0, imbueWeight) + Math.Max(0, slayerWeight) + Math.Max(0, salvageWeight);
+        if (totalWeight == 0)
+            return;
+
+        int roll = Random.Shared.Next(0, totalWeight);
+
+        bool applied = false;
+
+        if (roll < imbueWeight)
+        {
+            applied = TryApplyInitialImbue(item, cfg, s);
+        }
+        else
+        {
+            roll -= imbueWeight;
+            if (roll < slayerWeight)
+            {
+                applied = TryApplyInitialSlayer(item);
+            }
+            else
+            {
+                roll -= slayerWeight;
+                if (roll < salvageWeight)
+                    TryApplyInitialSalvageBoost(item);
+            }
+        }
+
+        if (applied)
+            player.SendMessage($"Your {item.NameWithMaterial} grows stronger at level {level}/{item.ItemMaxLevel}.");
+    }
+
+    private static void ApplyInitialQuestItemEffects(WorldObject item, Settings s)
+    {
+        QuestItemEffectSettings cfg = s.QuestItemEffects ?? new QuestItemEffectSettings();
+
+        int imbueWeight = cfg.AllowStandardImbues || cfg.AllowCustomImbues ? cfg.ImbueWeight : 0;
+        int slayerWeight = cfg.AllowSlayer ? cfg.SlayerWeight : 0;
+        int salvageWeight = cfg.AllowSalvageLikeBoosts ? cfg.SalvageWeight : 0;
+
+        int totalWeight = Math.Max(0, imbueWeight) + Math.Max(0, slayerWeight) + Math.Max(0, salvageWeight);
+        if (totalWeight == 0)
+            return;
+
+        int roll = Random.Shared.Next(0, totalWeight);
+
+        if (roll < imbueWeight)
+        {
+            if (TryApplyInitialImbue(item, cfg, s))
+                return;
+            roll -= imbueWeight;
+        }
+        else
+        {
+            roll -= imbueWeight;
+        }
+
+        if (roll < slayerWeight)
+        {
+            if (TryApplyInitialSlayer(item))
+                return;
+            roll -= slayerWeight;
+        }
+        else
+        {
+            roll -= slayerWeight;
+        }
+
+        if (roll < salvageWeight)
+        {
+            TryApplyInitialSalvageBoost(item);
+        }
+    }
+
+    private static bool TryApplyInitialImbue(WorldObject item, QuestItemEffectSettings cfg, Settings s)
+    {
+        int? damageTypeInt = item.GetProperty(PropertyInt.DamageType);
+        DamageType damageType = damageTypeInt.HasValue ? (DamageType)damageTypeInt.Value : DamageType.Undef;
+
+        ImbuedEffectType? chosen = damageType switch
+        {
+            DamageType.Acid => ImbuedEffectType.AcidRending,
+            DamageType.Cold => ImbuedEffectType.ColdRending,
+            DamageType.Electric => ImbuedEffectType.ElectricRending,
+            DamageType.Fire => ImbuedEffectType.FireRending,
+            DamageType.Pierce => ImbuedEffectType.PierceRending,
+            DamageType.Slash => ImbuedEffectType.SlashRending,
+            _ => null,
+        };
+
+        if (cfg.AllowStandardImbues && chosen.HasValue)
+        {
+            item.ImbuedEffect |= chosen.Value;
+            return true;
+        }
+
+        if (cfg.AllowCustomImbues)
+        {
+            if (s.BleedImbue?.Enabled == true)
+            {
+                OvertinkedImbueStore.Add(item.Guid.Full, OvertinkedImbueFlags.Bleed);
+                return true;
+            }
+
+            if (s.CleavingImbue?.Enabled == true)
+            {
+                OvertinkedImbueStore.Add(item.Guid.Full, OvertinkedImbueFlags.Cleaving);
+                return true;
+            }
+
+            if (s.NetherRendingImbue?.Enabled == true)
+            {
+                OvertinkedImbueStore.Add(item.Guid.Full, OvertinkedImbueFlags.NetherRending);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryApplyInitialSlayer(WorldObject item)
+    {
+        // Simple default: only weapons roll slayer.
+        if (item.WeenieType != WeenieType.MeleeWeapon && item.WeenieType != WeenieType.MissileLauncher && item.WeenieType != WeenieType.Caster)
+            return false;
+
+        CreatureType[] all = Enum.GetValues<CreatureType>();
+        CreatureType[] pool = all.Where(x => x != CreatureType.Invalid && x != CreatureType.Unknown && x != CreatureType.Wall).ToArray();
+        if (pool.Length == 0)
+            return false;
+
+        CreatureType chosen = pool[Random.Shared.Next(0, pool.Length)];
+
+        item.SetProperty(PropertyInt.SlayerCreatureType, (int)chosen);
+        item.SetProperty(PropertyFloat.SlayerDamageBonus, 1.0f);
+
+        return true;
+    }
+
+    private static void TryApplyInitialSalvageBoost(WorldObject item)
+    {
+        string kind = item.WeenieType switch
+        {
+            WeenieType.MeleeWeapon or WeenieType.MissileLauncher or WeenieType.Caster => "Damage",
+            WeenieType.Clothing => "ArmorLevel",
+            _ => "ArmorLevel",
+        };
+
+        SalvageTinkerRule rule = new()
+        {
+            Enabled = true,
+            EffectKind = kind,
+            MinValue = 1,
+            MaxValue = 2,
+        };
+
+        int value = SalvageEffectApplier.RollValue(rule);
+        SalvageEffectApplier.ApplyEffect(item, rule, value, isFailure: false);
     }
 
     private static int GetWorkmanship(WorldObject wo)

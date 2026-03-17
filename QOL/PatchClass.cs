@@ -94,7 +94,7 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
 
         var startPos = new Position(__instance.Location);
 
-        // TODO: (OptimShi): Actual animation length is longer than in retail. 18.4s
+        // Use authoritative motion-table animation length (retail was ~18.4s)
         ActionChain mpChain = new ActionChain();
         var animLength = DatManager.PortalDat.ReadFromDat<MotionTable>(__instance.MotionTableId).GetAnimationLength(MotionCommand.MarketplaceRecall);
         mpChain.AddDelaySeconds(animLength);

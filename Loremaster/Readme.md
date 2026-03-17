@@ -60,7 +60,7 @@ On every repeat solve (second completion onward) of a quest, one item from a wei
 - All items within a group are equally likely; the group Weight controls its frequency relative to other groups.
 - Per-quest overrides are supported — a specific quest can have its own loot table that replaces the global one entirely.
 - Groups with `Weight: 0` are disabled but remain in the file for reference.
-- Can be disabled entirely with `EnableRepeatSolveLoot: false`.
+- Disabled by default; set `EnableRepeatSolveLoot: true` in Settings.json and add `RepeatSolveLoot.json` to enable.
 
 Default loot table:
 
@@ -173,7 +173,7 @@ All settings live in `Settings.json` in the mod folder. The file is auto-generat
 
 | Setting | Type | Default | Description |
 |---|---|---|---|
-| `EnableRepeatSolveLoot` | bool | `true` | Master toggle for repeat-solve item rewards. |
+| `EnableRepeatSolveLoot` | bool | `false` | Master toggle for repeat-solve item rewards. |
 
 Loot tables are configured in `RepeatSolveLoot.json`. See that file for documentation on the weight system and per-quest overrides.
 
