@@ -1,8 +1,14 @@
 namespace Loremaster;
 
+using System.Text.Json;
+
 [HarmonyPatch]
 public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : BasicPatch<Settings>(mod, settingsName)
 {
+    static FileSystemWatcher? _settingsWatcher;
+    static DateTime _lastSettingsReload = DateTime.MinValue;
+    const int SettingsReloadDebounceMs = 500;
+
     // Start() runs on every mod load — cold boot AND hot-reload.
     // OnWorldOpen() is a one-shot ACE event fired at server startup; if the mod is
     // loaded after the world is already up (hot-reload), OnWorldOpen() never fires,
@@ -25,6 +31,48 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
 
         // Recalculate QP for all online players on reload/start
         UpdateIngamePlayers();
+
+        // When Settings.json changes, reload and recalc QP for all online players
+        _settingsWatcher?.Dispose();
+        _settingsWatcher = new FileSystemWatcher(modFolder)
+        {
+            Filter = "Settings.json",
+            NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size
+        };
+        _settingsWatcher.Changed += OnSettingsFileChanged;
+        _settingsWatcher.EnableRaisingEvents = true;
+    }
+
+    public override void Stop()
+    {
+        _settingsWatcher?.Dispose();
+        _settingsWatcher = null;
+        base.Stop();
+    }
+
+    static void OnSettingsFileChanged(object sender, FileSystemEventArgs e)
+    {
+        if ((DateTime.UtcNow - _lastSettingsReload).TotalMilliseconds < SettingsReloadDebounceMs)
+            return;
+        _lastSettingsReload = DateTime.UtcNow;
+
+        try
+        {
+            var path = e.FullPath;
+            if (!File.Exists(path)) return;
+            var json = File.ReadAllText(path);
+            var loaded = JsonSerializer.Deserialize<Settings>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (loaded is not null)
+            {
+                Settings = loaded;
+                UpdateIngamePlayers();
+                ModManager.Log("[Loremaster] Settings.json reloaded; recalculated QP for all online players.");
+            }
+        }
+        catch (Exception ex)
+        {
+            ModManager.Log($"[Loremaster] Failed to reload Settings.json: {ex.Message}", ModManager.LogLevel.Warn);
+        }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -245,12 +293,13 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
         var qst = __instance.GetQuest(questName);
         if (qst is null) return;
 
-        if (qst.NumTimesCompleted == 1 && __instance.Creature is Player player)
-        {
-            player.IncQuestPoints(-qst.Value());
-            if (player.Notify(LMBool.NotifyQuest))
-                player.SendMessage($"Removed {qst.Value()} QP on removing {questName}");
-        }
+        // QP loss disabled: losing QP is not allowed.
+        // if (qst.NumTimesCompleted == 1 && __instance.Creature is Player player)
+        // {
+        //     player.IncQuestPoints(-qst.Value());
+        //     if (player.Notify(LMBool.NotifyQuest))
+        //         player.SendMessage(LoremasterExtensions.FormatQpNotification($"−{qst.Value()} QP (quest removed: {questName})"));
+        // }
     }
 
     [HarmonyPrefix]
@@ -263,12 +312,13 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
         var qst = __instance.GetQuest(questName);
         if (qst is null) return;
 
-        if (qst.NumTimesCompleted == 1 && __instance.Creature is Player player)
-        {
-            player.IncQuestPoints(-qst.Value());
-            if (player.Notify(LMBool.NotifyQuest))
-                player.SendMessage($"Removed {qst.Value()} QP on removing {questName}");
-        }
+        // QP loss disabled: losing QP is not allowed.
+        // if (qst.NumTimesCompleted == 1 && __instance.Creature is Player player)
+        // {
+        //     player.IncQuestPoints(-qst.Value());
+        //     if (player.Notify(LMBool.NotifyQuest))
+        //         player.SendMessage(LoremasterExtensions.FormatQpNotification($"−{qst.Value()} QP (quest removed: {questName})"));
+        // }
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -316,7 +366,7 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
             // Quest Point increment
             player.IncQuestPoints(quest.Value());
             if (player.Notify(LMBool.NotifyQuest))
-                player.SendMessage($"Added {quest.Value()} QP from {questFormat}");
+                player.SendMessage(LoremasterExtensions.FormatQpNotification($"+{quest.Value()} QP from {questFormat}"));
 
             var questName = QuestManager.GetQuestName(questFormat) ?? questFormat;
 
@@ -338,13 +388,14 @@ public class PatchClass(BasicMod mod, string settingsName = "Settings.json") : B
         }
 
         // ── Quest removed (any → 0) ──────────────────────────────────────────
-        if (previousSolves != 0 && solves == 0)
-        {
-            var quest = instance.GetQuest(QuestManager.GetQuestName(questFormat));
-            player.IncQuestPoints(-quest.Value());
-            if (player.Notify(LMBool.NotifyQuest))
-                player.SendMessage($"Subtracted {quest.Value()} QP from {questFormat}");
-        }
+        // QP loss disabled: losing QP is not allowed.
+        // if (previousSolves != 0 && solves == 0)
+        // {
+        //     var quest = instance.GetQuest(QuestManager.GetQuestName(questFormat));
+        //     player.IncQuestPoints(-quest.Value());
+        //     if (player.Notify(LMBool.NotifyQuest))
+        //         player.SendMessage(LoremasterExtensions.FormatQpNotification($"−{quest.Value()} QP from {questFormat}"));
+        // }
     }
 
     // ─────────────────────────────────────────────────────────────────────────

@@ -102,5 +102,9 @@ public class Settings
     public bool EnableQuestCooldownReduction { get; set; } = true;
 
     // Cap on cooldown reduction (0–1). Null = uncapped. E.g. 0.9 = at most 90% reduction.
-    public float? QuestCooldownReductionCap { get; set; } = null;
+    public float? QuestCooldownReductionCap { get; set; } = 0.95f;
+
+    // Quest names that act as one-time flags (e.g. portal eligibility). Once completed, the player
+    // is always considered eligible; cooldown reduction does not apply. Case-sensitive (see Quests.txt).
+    public List<string> PermanentFlagQuests { get; set; } = new();
 }

@@ -126,9 +126,9 @@ public static class LoremasterExtensions
     // Per-player notification helpers
     // ─────────────────────────────────────────────────────────────────────────
 
-    // Returns the player's personal preference for a notify flag (default: false).
+    // Returns the player's personal preference for a notify flag. NotifyQuest defaults to true; others to false.
     public static bool Notify(this Player player, FakeBool flag) =>
-        player.GetProperty(flag) ?? false;
+        player.GetProperty(flag) ?? (flag == LMBool.NotifyQuest);
 
     // Toggles a notify flag and confirms to the player. Returns the new state.
     public static bool ToggleNotify(this Player player, FakeBool flag, string label)
@@ -138,6 +138,10 @@ public static class LoremasterExtensions
         player.SendMessage($"[Loremaster] {label} notifications {(next ? "enabled" : "disabled")}.");
         return next;
     }
+
+    // Format a QP gain/loss line in the same style as LeyLineLedger bank output (==== header, indented line).
+    public static string FormatQpNotification(string line) =>
+        $"==== Quest Points ====\n  {line}";
 
     // ─────────────────────────────────────────────────────────────────────────
     // Completion bonus helpers
@@ -254,7 +258,7 @@ public static class LoremasterExtensions
             }
             else if (player.Notify(LMBool.NotifyQuest))
             {
-                player.SendMessage($"[Loremaster] Repeat solve of {questName} rewarded: {item.Name}!");
+                player.SendMessage(FormatQpNotification($"Repeat solve of {questName} rewarded: {item.Name}!"));
             }
         });
         chain.EnqueueChain();

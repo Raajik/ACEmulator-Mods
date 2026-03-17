@@ -21,14 +21,21 @@ internal static class QuestCooldownReductionPatch
         if (__instance.Creature is not Player player)
             return;
 
+        var questName = QuestManager.GetQuestName(questFormat);
+        var playerQuest = __instance.GetQuest(questName);
+
+        if (PatchClass.Settings.PermanentFlagQuests is { Count: > 0 } flagQuests && flagQuests.Contains(questName))
+        {
+            if (playerQuest != null && playerQuest.NumTimesCompleted > 0)
+                __result = TimeSpan.MinValue;
+            return;
+        }
+
         var reduction = player.GetQuestCooldownReduction();
         if (reduction <= 0) return;
 
-        var questName = QuestManager.GetQuestName(questFormat);
         var quest = DatabaseManager.World.GetCachedQuest(questName);
         if (quest is null) return;
-
-        var playerQuest = __instance.GetQuest(questName);
         if (playerQuest is null) return;
 
         var currentTime = (uint)Time.GetUnixTime();

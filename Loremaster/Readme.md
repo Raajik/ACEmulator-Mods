@@ -94,14 +94,16 @@ Default broadcast format:
 When enabled, quest repeat cooldowns are reduced by the same percentage as the player's XP bonus from Quest Points. For example, a 25% XP bonus (1.25×) reduces the required wait by 25% — a 24-hour cooldown becomes 18 hours.
 
 - Controlled by `EnableQuestCooldownReduction` (default `true`).
-- Optional cap via `QuestCooldownReductionCap` (0–1). Default is uncapped; set e.g. `0.9` to limit reduction to 90%.
+- Optional cap via `QuestCooldownReductionCap` (0–1). Default is 0.95 (95% max reduction); set `null` for uncapped.
 - Effective wait time = full repeat time × (1 − reduction).
+
+**Permanent flag quests:** Add quest names to `PermanentFlagQuests` when they are used as one-time flags (e.g. portal or dungeon entry). For those quests, once a player has completed them at least once, they are always considered eligible; cooldown reduction does not apply. Use internal quest names (case-sensitive, see Quests.txt). Default is an empty list.
 
 ---
 
 ### Per-Player Notification Preferences
 
-All verbose notifications are opt-in and toggled per character. Preferences persist across sessions. No server-wide setting controls these — each player configures their own.
+Quest QP gain/loss notifications are on by default; other notifications are opt-in. All are toggled per character and persist across sessions. No server-wide setting controls these — each player configures their own. QP messages use a formatted style similar to the LeyLineLedger bank output (==== Quest Points ==== header).
 
 | Command | What it toggles |
 |---|---|
@@ -137,13 +139,13 @@ Earned 426,711 XP! (300,501 * 142%)
 |---|---|
 | `/qb-inspect <name>` | Shows stored QP, XP multiplier, character quest count, and account-wide unique count for an online player. |
 | `/qb-reset <name>` | Recalculates and re-stores QP for a specific online player. Notifies both admin and player. |
-| `/qb-resetall` | Recalculates QP for all currently online players. Safe to run after changes to `Settings.json`. |
+| `/qb-resetall` | Recalculates QP for all currently online players. Optional after editing `Settings.json` — the mod also recalculates automatically when the file is saved. |
 
 ---
 
 ## Settings Reference
 
-All settings live in `Settings.json` in the mod folder. The file is auto-generated with defaults on first run. Hot-reload is supported — run `/qb-resetall` after changing values to apply them to online players immediately.
+All settings live in `Settings.json` in the mod folder. The file is auto-generated with defaults on first run. Hot-reload is supported: when you save `Settings.json`, the mod reloads it and automatically recalculates QP for all online players (no need to run `/qb-resetall` unless you prefer to trigger it manually).
 
 ### Quest Point System
 
@@ -191,7 +193,8 @@ Loot tables are configured in `RepeatSolveLoot.json`. See that file for document
 | Setting | Type | Default | Description |
 |---|---|---|---|
 | `EnableQuestCooldownReduction` | bool | `true` | Reduce quest repeat timers by the same % as the player's XP bonus. |
-| `QuestCooldownReductionCap` | float? | `null` | Cap on reduction (0–1). `null` = uncapped; e.g. `0.9` = at most 90% reduction. |
+| `QuestCooldownReductionCap` | float? | `0.95` | Cap on reduction (0–1). Default 95% max; set `null` for uncapped. |
+| `PermanentFlagQuests` | list | `[]` | Quest names that act as one-time flags (e.g. portal entry). Once completed, player is always eligible; cooldown reduction does not apply. Case-sensitive. |
 
 ---
 
