@@ -1,0 +1,10 @@
+{
+  "Name": "Aptitude",
+  "Author": "",
+  "Description": "Player opt-in challenge mode: skills can only be raised through usage; XP is spent only on attributes and vitals. Activation at level 1 only; disabling is permanent. Includes usage-based skill XP and optional rewards.",
+  "Version": "1.0",
+  "Enabled": true,
+  "HotReload": true,
+  "RegisterCommands": true,
+  "ACEVersion": "0.0"
+}
